@@ -1,0 +1,377 @@
+---
+title: "Evaluation of the explanation model and forecast for `r input$depVar`"
+---
+```{r, fig.height=3.5, fig.width=3.5, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+  
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+  indexintrocoll = 0
+  
+  if(length(input$introconclucheckbox) != 0){
+      if(input$introconclucheckbox == "Introduction remarks"){indexintrocoll <- 1}
+      if(input$introconclucheckbox == "Conclusion remarks"){indexintrocoll <- 2}
+      if(length(input$introconclucheckbox) == 2){indexintrocoll <- 3}
+  }
+
+  
+
+```
+
+`r if(indexintrocoll == 1 | indexintrocoll == 3){"##Introduction remarks"}`
+
+
+```{r, fig.height=3.5, fig.width=3.5, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE }
+  #text<-cat(paste(strwrap(input$introremarks, 80), collapse="\n"))
+
+  if(length(input$introconclucheckbox) != 0){
+      if(indexintrocoll == 1){return(
+            p(input$introremarks)
+      )}
+      
+      if(indexintrocoll == 3){
+            p(input$introremarks)
+      }
+  }
+
+```
+
+
+
+
+```{r, fig.height=3.5, fig.width=3.5, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+
+library(ggplot2)
+  
+  indexplot<-0
+
+  if(!is.null(input$reportlistplots)){
+   if(is.null(report$plots[[input$reportlistplots[1]]]) & is.null(report$plots[[input$reportlistplots[2]]])  ){indexplot<-0}
+   if(!is.null(report$plots[[input$reportlistplots[1]]]) & is.null(report$plots[[input$reportlistplots[2]]])  ){indexplot<-1}
+   if(!is.null(report$plots[[input$reportlistplots[1]]]) & !is.null(report$plots[[input$reportlistplots[2]]])  ){indexplot<-2}
+  }
+```
+
+```{r, fig.height=5.5, fig.width=5.5, , fig.align = "center", echo = FALSE, warning = FALSE}
+
+indexmatrix<-0
+
+if(!is.null(input$reportlistmatrix)){
+  if(is.null(report$matrices[[input$reportlistmatrix[1]]]) & is.null(report$matrices[[input$reportlistmatrix[2]]])){indexmatrix<-0}
+  if(!is.null(report$matrices[[input$reportlistmatrix[1]]]) & is.null(report$matrices[[input$reportlistmatrix[2]]])){indexmatrix<-1}
+  if(!is.null(report$matrices[[input$reportlistmatrix[1]]]) & !is.null(report$matrices[[input$reportlistmatrix[2]]])){indexmatrix<-2}
+}
+
+indextimeseries<-0
+
+if(!is.null(input$reportlisttimeseriesplotAllComp)){indextimeseries<-1}
+
+
+
+```
+
+`r if(indexplot > 0 | indexmatrix > 0){"##Visualisation of data"}`
+`r if(indexplot > 0){"###Scatter plots"}`
+`r if(indexplot > 0){"The following scatter plot can give you a first impression of the relationship of the two respectively choosen  quantitive variables. Be aware that the detected relationship may not hold in a multivariate context."}`
+
+
+```{r, fig.height=3.0, fig.width=3.0, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+if(indexplot == 1){
+    p(paste("The scatter plot shows the relationship between",report$plots[[input$reportlistplots[1]]]$labels[1], "and" ,report$plots[[input$reportlistplots[1]]]$labels[2]))}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+if(indexplot == 1){
+  plot(report$plots[[input$reportlistplots[1]]])}
+```
+
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexplot == 2){
+  p(paste("The left scatter plot shows the relationship between", report$plots[[input$reportlistplots[1]]]$labels[1], "and", report$plots[[input$reportlistplots[1]]]$labels[2],". The right scatter plot the relationship between", report$plots[[input$reportlistplots[2]]]$labels[1], "and", report$plots[[input$reportlistplots[2]]]$labels[2]),".")
+}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexplot == 2){
+  plot(report$plots[[input$reportlistplots[1]]])
+  plot(report$plots[[input$reportlistplots[2]]])
+}
+```
+
+
+
+
+`r if(indexmatrix >0){"###Scatter matrix"}`
+`r if(indexmatrix >0){"The following scatter matrix shows you a more comprehensive view of some repectiveley choosen variables. In the upper left part ot the matrix you see the scatter plots of the corresponding variables. The diagonla line shows you the distribution of the associated variables. On the upper right part of the matrix  the correlation of the variables are shown."}`
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+
+if(indexmatrix > 0){
+  if(length(levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])) == 2){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[1], "and", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[2],"."))}
+}
+```
+
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix > 0){
+  if(length(levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])) == 3){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[2]," and", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[3],"."))}
+}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix > 0){
+  if(length(levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])) == 4){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[2],",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[3],"and", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[4], "."))}
+}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix > 0){
+  if(length(levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])) == 5){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[2],",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[3],",", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[4], "and", levels(report$matrices[[input$reportlistmatrix[1]]]$data[,5])[5], "."))}
+}
+```
+
+
+```{r, fig.height=5.5, fig.width=5.5, fig.align = "center", echo = FALSE, warning = FALSE}
+if(indexmatrix > 0){
+  plot(report$matrices[[input$reportlistmatrix[1]]])
+}
+```
+
+
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+
+if(indexmatrix == 2){
+  if(length(levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])) == 2){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[1], "and", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[2],"."))}
+}
+```
+
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix == 2){
+  if(length(levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])) == 3){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[2]," and", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[3],"."))}
+}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix == 2){
+  if(length(levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])) == 4){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[2],",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[3],"and", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[4], "."))}
+}
+```
+
+```{r, fig.height=3.0, fig.width=3.0, echo = FALSE, warning = FALSE, message = FALSE}
+if(indexmatrix == 2){
+  if(length(levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])) == 5){
+    p(paste("The following scatter matrix gives an overview of the relations of the variables", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[1], ",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[2],",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[3],",", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[4], "and", levels(report$matrices[[input$reportlistmatrix[2]]]$data[,5])[5], "."))}
+}
+```
+
+
+```{r, fig.height=5.5, fig.width=5.5, fig.align = "center", echo = FALSE, warning = FALSE}
+if(indexmatrix == 2){
+  plot(report$matrices[[input$reportlistmatrix[2]]])
+}
+```
+
+
+
+`r if(indextimeseries == 1){"###Timeseries plot"}`
+`r if(indextimeseries == 1){"The timeseries plot shows the scaled data of the corresponding variables. The data were scaled because of comparison by substracting the mean and dividing through the standard deviation."}`
+
+
+
+```{r, fig.height=5.5, fig.width=5.5, fig.align = "center", echo = FALSE, warning = FALSE}
+
+if(indextimeseries == 1){
+
+    p(paste("The table underneath the timeseries plot show the correlation regarding to", input$depVar, "."))
+}
+```
+
+
+```{r, fig.height=5.5, fig.width=9.5, fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+library(ggplot2)
+library(timeSeries)
+library(knitr)
+if(!is.null(input$reportlisttimeseriesplotAllComp)){
+  if(length(input$reportlisttimeseriesplotAllComp) == 1){
+    autoplot(report$plotAllCompzwei, facets = FALSE) +
+      ylab("Scaled values") +
+      ggtitle("Timeline graph")
+  }
+}
+```
+
+
+```{r xtabletimeseries, echo = FALSE, warning = FALSE, message = FALSE}
+if(!is.null(input$reportlisttimeseriesplotAllComp)){
+  if(length(input$reportlisttimeseriesplotAllComp) == 1){
+    kable(report$korrelationtableplotAllComp)
+  }
+}
+```
+
+
+##Explanation model
+
+The following explanation model shows a timeseries of the explanation model as well as some tabes for the evaluation of the model.
+
+
+
+```{r savedexplanationmodelgraph, echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+autoplot(report$regression.store.plotzwei  , facets = FALSE) +
+  ggtitle("Saved explanation model")
+
+```
+
+
+
+In the following table you can see the independent variables of the model as well as ther coressponding beta estimates, standard errors, t- and p-values.
+```{r savedexplanationmodelcoefficient, echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+
+kable(regression.modelle$regression.coefficent)
+```
+
+
+
+For the explanation model the following lags of the dependet variables were used for the calculation: 
+```{r savedexplanationmodelqual, echo = FALSE, fig.width = 5, warning = FALSE, message = FALSE}
+
+lags <- regression.modelle$gespeichertes.modell[[4]]
+lags.store <- data.frame(lags)
+
+rownames(lags.store) <- attributes(regression.modelle$gespeichertes.modell[[2]])$names
+
+lags.store<-as.data.frame(lags.store)
+
+kable(lags.store)
+
+```
+
+For the explanation model the following information criterias as well as coefficients of determination shows the quality of the regression:
+
+```{r , echo = FALSE, fig.width = 5, warning = FALSE, message = FALSE}
+
+kable(regression.modelle$regression.quality)
+```
+
+
+##Forecast of: `r arima.values$tabelle.variablen[,1]`
+The independent variables were forecasted with the following methods:
+```{r,  echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+
+kable(arima.values$tabelle.variablen)
+```
+
+##Forecast of `r input$depVar`
+The following graph you can see the forecast of the dependent variable:
+```{r plotfilangraph, fig.height=5.5, fig.width=9.5, fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+
+autoplot(report$savedfinalforecastgraph, facets = FALSE) +
+  ylab("Scaled values") +
+  ggtitle("Timeline graph")
+
+```
+
+The forecast results the following values: 
+```{r finaltableforecast, echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+kable(report$prediction.results)
+```
+
+
+
+```{r , echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+indexcollcorr <- 0
+if(!is.null(input$reportlistcorrcolltable)){
+  names<-input$reportlistcorrcolltable
+  if(length(names) == 1 & names[1] == "Correlation table"){indexcollcorr<-1}
+  if(length(names) == 1 & names[1] == "Collinearity table"){indexcollcorr<-2}
+  if(length(names) == 2){indexcollcorr<-3}
+}
+```
+
+`r if(indexintrocoll == 2 | indexintrocoll == 3){"##Conclusion remarks"}`
+
+
+
+```{r, fig.height=3.5, fig.width=3.5, , fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE}
+
+  if(length(input$introconclucheckbox) != 0){
+      if(indexintrocoll == 2){return(
+            p(input$concluremarks)
+      )}
+      
+      if(indexintrocoll == 3){return(
+            p(input$concluremarks)
+      )}
+  }
+
+```
+
+
+`r if(indexcollcorr > 0){"##Appendix"}`
+`r if(indexcollcorr == 1 | indexcollcorr == 3){"###Correlation table"}`
+
+
+```{r , echo = FALSE, warning = FALSE, message = FALSE}
+if(indexcollcorr == 1 | indexcollcorr == 3){
+  
+    p(paste('In the following table you see the correlations of all dependent variables regarding to', input$depVar, 'and with the corresponding time lags.'))
+  }
+```
+
+
+
+
+
+
+```{r , echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE}
+
+if(indexcollcorr == 1 | indexcollcorr == 3){
+  kable(cbind("Variable" = rownames(cortables()[[1]]), round(cortables()[[1]], digits = 2))[,-1])
+}
+```
+
+`r if(indexcollcorr == 2 | indexcollcorr == 3){"###Collinearity table"}`
+`r if(indexcollcorr == 2 | indexcollcorr == 3){"In the following table you see the collinearity of all variables"}`
+
+
+```{r corrcollzwei, echo = FALSE, fig.width = 10, warning = FALSE, message = FALSE, results = "asis", message = FALSE}
+library(pander)
+
+
+if(indexcollcorr == 2 | indexcollcorr == 3){
+  colltable<- cbind("Variable" = rownames(cortables()[[2]]), round(cortables()[[2]], digits = 2))[,-1]
+  pander(colltable, keep.line.breaks = TRUE)
+  
+}
+```
+
+
+
+
+```{r end, echo = FALSE, warning = FALSE, message = FALSE}
+detach("package:pander", unload=TRUE)
+```
+
+
+
+

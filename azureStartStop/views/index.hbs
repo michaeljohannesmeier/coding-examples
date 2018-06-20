@@ -1,0 +1,426 @@
+<h1>{{title}} AZURE VMs</h1>
+
+
+<table style="width:100%; table-layout: fixed">
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <td><a id="buttonVM1" style="text-decoration: underline; cursor: pointer"></a></td>
+        <td id="statusVM1"></td>
+        <td id="dateAction1"></td>
+        <td ><a id="connectText1" href="/files/cmaasrpa1.rdp" download></td>
+    </tr>
+    <tr>
+        <td><a style="text-decoration: underline; cursor: pointer" id="buttonVM2" style="text-decoration: underline; cursor: pointer"></a></td>
+        <td id="statusVM2"></td>
+        <td id="dateAction2"></td>
+        <td ><a id="connectText2" href="/files/cmaasrpa2.rdp" download></td>
+    </tr>
+    <tr>
+        <td><a style="text-decoration: underline; cursor: pointer" id="buttonVM3" style="text-decoration: underline; cursor: pointer"></a></td>
+        <td id="statusVM3"></td>
+        <td id="dateAction3"></td>
+        <td ><a id="connectText3" href="/files/cmaasrpa3.rdp" download></td>
+    </tr>
+</table>
+<div id="loader" style="display: none">Loading/refreshing status, please wait....</div>
+
+
+<style>
+    #loader {
+        position: absolute; width: 100%; height: 20%; background: url('images/spinner.gif') no-repeat center center;
+    }
+</style>
+
+
+<script>
+
+    var vms = {
+        nr: ["1", "2", "3"],
+        names: ["VM 1", "VM 2", "VM 3"],
+        statuses: [],
+        connectText: ["Connect", "", "", ""]
+    };
+    var statuses = ["running", "stopped", "starting", "stopping"];
+    var statusesPending = ["Starting VM ....", "Stopping VM ...."];
+    var statusesButton = ["Stop VM ", "Start VM ", "Stop VM ", "Start VM "];
+
+
+
+    function updateHTMLStatusButton(){
+        for (var vmNr0b = 0; vmNr0b <3; vmNr0b++) {
+            for (var statusNr = 0; statusNr <=3; statusNr++){
+                if (vms.statuses[vmNr0b] === statuses[statusNr]) {
+                    if(vms.statuses[vmNr0b] === "starting" || vms.statuses[vmNr0b] === "stopping" ){
+                        document.getElementById("buttonVM" + vms.nr[vmNr0b]).onclick = false;
+                        document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "not-allowed";
+                        document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statusesPending[statusNr - 2];
+                        document.getElementById("buttonVM" + vms.nr[vmNr0b]).innerHTML = statusesButton[statusNr] + vms.nr[vmNr0b];
+                        console.log("starting");
+                    } else {
+                        if (vms.statuses[vmNr0b] === "runnig"){
+                            document.getElementById("connectText"+ vms.nr[vmNr0b]).innerHTML = vms.connectText[0];
+                            document.getElementById("dateAction" + vms.nr[vmNr0b]).innerHTML = "stared at " + datetime;
+                        }
+                        console.log("else part here");
+                        document.getElementById("buttonVM" + vms.nr[vmNr0b]).innerHTML = statusesButton[statusNr] + vms.nr[vmNr0b];
+                        document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statuses[statusNr];
+                        document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "pointer";
+                        document.getElementById("connectText"+ vms.nr[vmNr0b]).innerHTML = vms.connectText[statusNr];
+                        switch (vmNr0b) {
+                            case 0:
+                                document.getElementById("buttonVM" + vms.nr[vmNr0b]).addEventListener('click', function() {startStopVM(0)});
+                                break;
+                            case 1:
+                                document.getElementById("buttonVM" + vms.nr[vmNr0b]).addEventListener('click', function() {startStopVM(1)});
+                                break;
+                            case 2:
+                                document.getElementById("buttonVM" + vms.nr[vmNr0b]).addEventListener('click', function() {startStopVM(2)});
+                                break;
+                        }
+                   }
+
+                }
+            }
+        }
+    }
+
+
+    var caseN;
+    var tenantId = "495f2450-1994-4c8c-a99b-7e3ed1144deb";
+    var clientId = "3acda5a3-c463-4180-acd9-893943c0eda2";
+    var clientSecret = "C8pn5xjXK3GrlScXUjgJvvgkzUCaMTDvvuyFtG5zeLU=";
+    var bearer;
+    var subscriptionId = "b3509b4a-399b-4cb8-b2eb-cead07182b5d";
+    var params = "grant_type=client_credentials&client_id=" + clientId + "&resource=https://management.azure.com/&client_secret=" + clientSecret;
+
+
+
+
+    function getStatus(vmName) {
+        return new Promise(resolve => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "https://management.azure.com/subscriptions/b3509b4a-399b-4cb8-b2eb-cead07182b5d/resourceGroups/cmaasrpa/providers/Microsoft.Compute/virtualMachines/" + vmName + "/instanceView?api-version=2017-12-01", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + bearer);
+            xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhttp.onreadystatechange = function () {
+                if (xhttp.status == 200 && this.responseText !== "" && xhttp.readyState == 4) {
+                    var jsonObj = JSON.parse(this.responseText);
+                    console.log(jsonObj);
+                    console.log("Status of VM " + vmName + ": " + jsonObj.statuses[1].code);
+                    resolve(jsonObj.statuses[1].code);
+                } else {
+                    //console.warn(xhttp.statusText, xhttp.responseText);
+                }
+            };
+            xhttp.send();
+        });
+    }
+
+    function translateInputStringVMStatus(vmStatus) {
+        switch(vmStatus) {
+            case "PowerState/running":
+                return "running";
+                break;
+            case "PowerState/deallocated":
+                return "stopped";
+                break;
+            case "PowerState/deallocating":
+                return "stopping";
+                break;
+            case "PowerState/stopped":
+                return "stopped";
+                break;
+            case "PowerState/starting":
+                return "starting";
+                break;
+            case "PowerState/stopping":
+                return "stopping";
+                break;
+        }
+        console.log("logging vmStatus", vmStatus);
+
+    }
+
+
+
+    function getBearer(callback) {
+        console.log("try to get bearer");
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "https://login.microsoftonline.com/" + tenantId + "/oauth2/token", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.onreadystatechange = function () {
+            if (xhttp.status == 200 && this.responseText !== "" && xhttp.readyState == 4 ) {
+                var jsonResponse = JSON.parse(this.responseText);
+                bearer = jsonResponse.access_token;
+                console.log("bearer ok");
+                callback();
+            } else {
+                //console.warn(xhttp.statusText, xhttp.responseText);
+            }
+        };
+        xhttp.send(params);
+    }
+
+    function getAllStatuses() {
+
+        document.getElementById("loader").style.display = "block";
+        for (var i = 1; i <= 3; i++){
+            document.getElementById("buttonVM" + i).innerHTML = "";
+            document.getElementById("statusVM" + i).innerHTML = "";
+            document.getElementById("connectText" + i).innerHTML = "";
+        }
+
+        return new Promise(resolve => {
+            getStatus("cmaasrpa1").then((vm1) => {
+                getStatus("cmaasrpa2").then((vm2) => {
+                    getStatus("cmaasrpa3").then((vm3) => {
+                        console.log("status vm 1: " + translateInputStringVMStatus(vm1));
+                        console.log("status vm 2: " + translateInputStringVMStatus(vm2));
+                        console.log("status vm 3: " + translateInputStringVMStatus(vm3));
+                        vms.statuses[0] = translateInputStringVMStatus(vm1);
+                        vms.statuses[1] = translateInputStringVMStatus(vm2);
+                        vms.statuses[2] = translateInputStringVMStatus(vm3);
+                        updateHTMLStatusButton();
+                        document.getElementById("loader").style.display = "none";
+                    });
+                });
+            });
+        });
+    }
+
+    function startStopVMHttp(startStop, vmName) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "https://management.azure.com/subscriptions/b3509b4a-399b-4cb8-b2eb-cead07182b5d/resourceGroups/cmaasrpa/providers/Microsoft.Compute/virtualMachines/" + vmName + "/" + startStop +"?api-version=2017-12-01", true);
+        xhttp.setRequestHeader("Authorization", "Bearer " + bearer);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.onreadystatechange = function () {
+            if (xhttp.status == 200 && this.responseText !== "" && xhttp.readyState == 4 ) {
+                var jsonResponse = JSON.parse(this.responseText);
+                console.log("i am here trying to " + startStop + " " + vmName);
+                console.log(jsonResponse);
+            } else {
+                //console.warn(xhttp.statusText, xhttp.responseText);
+            }
+        };
+        xhttp.send(params);
+    }
+
+    function startStopVM(vmNr0b) {
+        console.log("inside start stop " + vms.statuses[vmNr0b] + vmNr0b);
+        var currentdate = new Date();
+        var datetime =  + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/"
+                + currentdate.getFullYear() + " @ "
+                + currentdate.getHours() + ":"
+                + currentdate.getMinutes() + ":"
+                + currentdate.getSeconds();
+        console.log(datetime);
+        switch (vms.statuses[vmNr0b]) {
+
+            // execute when VM is currently stopped
+            case statuses[1]:
+                caseN = 0;
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).onclick = false;
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "not-allowed";
+                document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statusesPending[caseN];
+                getBearer(function() {startStopVMHttp("start", "cmaasrpa" + vms.nr[vmNr0b])});
+                //checkIfReady(caseN, vmNr0b);
+                break;
+
+            // execute when VM is currently running
+            case statuses[0]:
+                caseN = 1;
+                document.getElementById("connectText"+ vms.nr[vmNr0b]).innerHTML = "";
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).onclick = false;
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "not-allowed";
+                document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statusesPending[caseN];
+                getBearer(function() {startStopVMHttp("powerOff", "cmaasrpa" + vms.nr[vmNr0b])});
+                //checkIfReady(caseN, vmNr0b);
+                break;
+
+        }
+    }
+    function sleep(ms) {
+        return new Promise(function(resolve, reject) {setTimeout(resolve, ms)});
+    }
+
+    async function getAllStatusesLoop() {
+        do {
+            getBearer(getAllStatuses);
+            await sleep(60000);
+            console.log("active, next status update in 10 seconds")
+        }
+        while (true);
+
+    };
+
+    getAllStatusesLoop()
+
+    function sendDataToServer() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://localhost:5000/savedata", true);
+        var testData = {hallo: "you", you: "are awesome"};
+        xhttp.onreadystatechange = function () {
+/*            if (xhttp.status == 200 && this.responseText !== "" && xhttp.readyState == 4 ) {
+                var jsonResponse = JSON.parse(this.responseText);
+                var responseText = jsonResponse;
+                console.log("response Text: " + responseText);
+                callback();
+            } else {
+                //console.warn(xhttp.statusText, xhttp.responseText);
+            }*/
+        };
+        xhttp.send("testData");
+    }
+    sendDataToServer();
+
+
+
+
+/*
+    var fs = require('fs');
+    var json ={ dasist: 1, dasauch: 2};
+    fs.writeFile('/files/startStopLast.json', json);
+
+    readTextFile("/files/startStopLast.json", function(text){
+        var data = JSON.parse(text);
+        console.log(data);
+    });
+*/
+
+/*
+    async function checkIfReady(caseN, vmNr0b) {
+        document.getElementById("buttonVM" + vms.nr[vmNr0b]).onclick = false;
+        document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "not-allowed";
+        document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statusesPending[caseN];
+        do {
+            console.log("this is inside javacript, counter: " + counterTries);
+            await sleep(5000);
+            counterTries = counterTries + 1;
+
+            if (counterTries === 3) {
+                console.log("terminated succesfull");
+                vms.statuses[vmNr0b] = statuses[0];
+                counterTries = 1;
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).innerHTML = statusesButton[caseN] + vms.nr[vmNr0b];
+                document.getElementById("statusVM" + vms.nr[vmNr0b]).innerHTML = statuses[caseN];
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).style.cursor = "pointer";
+                document.getElementById("buttonVM" + vms.nr[vmNr0b]).onclick = function() {startStopVM(vmNr0b)};
+                break;
+
+            }
+
+            if (counterTries === counterTriesThreshold) {
+                console.log("terminated loop x times unsuccesfull");
+
+            }
+        }
+        while (counterTries <= counterTriesThreshold);
+
+
+    }
+*/
+
+
+
+
+    /*
+    $.ajax({
+        url: "https://www.google.de",
+        type: 'POST',
+        headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:5000',
+            'Content-Type':'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'DELETE, HEAD, GET, OPTIONS, POST, PUT',
+            'Access-Control-Allow-Headers': 'Content-Type, Content-Range, Content-Disposition, Content-Description',
+            'Access-Control-Max-Age': '1728000'
+        },
+        data: {
+            "grant_type": "client_credentials",
+            "client_id": clientId,
+            "resource":"https://management.azure.com/",
+            "client_secret": clientSecret
+        },
+        success: function(data) {
+            console.log(data);
+        }
+    });
+*/
+
+
+
+
+
+
+
+
+    /*    var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var parsedCounries = JSON.parse(this.responseText)[1];
+                console.log(parsedCounries);
+            }
+        };
+        xhttp.open("GET", "http://api.worldbank.org/v2/countries?per_page=500&format=json", true);
+        xhttp.send();*/
+    /*    jQuery.ajax({
+            url: "https://login.microsoftonline.com/\" + tenantId + \"/oauth2/token",
+            type: "POST",
+
+            contentType: 'application/json; charset=utf-8',
+            success: function(resultData) {
+                //here is your json.
+                // process it
+
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+            },
+
+            timeout: 120000,
+        });*/
+
+
+
+    /*    var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "https://login.microsoftonline.com/" + tenantId + "/oauth2/token", true);
+        xhttp.onreadystatechange = function () {
+            xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            if (this.readyState == 4 && this.status == 200) {
+                var parsedCounries = JSON.parse(this.responseText)[1];
+                console.log(parsedCounries);
+            }
+        };
+
+        xhttp.send();*/
+
+
+
+    /*    xhttp.open("http://api.worldbank.org/v2/countries?per_page=500&format=json", true);
+        //xhttp.open("POST","https://login.microsoftonline.com/" + tenantId + "/oauth2/token", true);
+
+        xhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhttp.withCredentials = true;
+
+        //xhttp.open("GET", "http://www.google.de");
+        xhttp.addEventListener('load', function(event) {
+            if (xhttp.status >= 200 && xhttp.status < 300) {
+                var json = JSON.parse(xhttp.responseBody);
+                bearer = json.access_token;
+                console.log("here comes bearer token:" + bearer);
+                console.log(xhttp.responseText);
+            } else {
+                console.warn(xhttp.statusText, xhttp.responseText);
+            }
+        });
+        //xhttp.send();
+        xhttp.send(JSON.stringify(params));*/
+
+
+
+</script>

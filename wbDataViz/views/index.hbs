@@ -1,0 +1,90 @@
+
+
+<h1>{{title}}</h1>
+<br>
+
+
+<div id="selectCountriesDiv"></div>
+<button onclick="getWbData()">Load data</button>
+
+<div id="hchartsContainer1"></div>
+
+
+
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="javascripts/highcharts.js"></script>
+<script src="javascripts/dataCatalog.js"></script>
+<script src="plugins/moment.js"></script>
+<script>
+
+    $( document ).ready(function() {
+
+
+        console.log( "ready!" );
+    });
+    function getWbData() {
+        var allOptionElements = document.getElementById("selectCountriesSelect").children;
+        var allCountryIds = [];
+        var allCountryNames = [];
+        for (i = 0; i < allOptionElements.length; i++) {
+            allCountryIds.push(allOptionElements[i].value);
+            allCountryNames.push(allOptionElements[i].text);
+        }
+
+        console.log(allCountryNames);
+
+        var firstDate = new Date("2000");
+        var secondDate = new Date("2010");
+        var dates = [];
+        var newDate;
+        dates.push(firstDate.getFullYear());
+        while( firstDate < secondDate ){
+            firstDate.setFullYear(firstDate.getFullYear() + 1);
+            newDate = new Date(firstDate);
+            dates.push(newDate.getFullYear());
+        }
+
+
+        var xhttp2 = new XMLHttpRequest();
+
+        var data2 = xhttp2.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+
+                var parsedData = JSON.parse(this.responseText)[1];
+                console.log(parsedData);
+
+                var data = {};
+                for(i = 0; i < allCountryIds.length; i++) {
+                    data[allCountryIds[i]] = [];
+                    parsedData.forEach(function (value, index) {
+                        if (value.countryiso3code == allCountryIds[i])
+                            data[allCountryIds[i]].push(value.value)
+                    });
+                }
+                console.log(data);
+                myHChartFunction(data, allCountryNames, allCountryIds, dates);
+            }
+        };
+        var stringCountries = allCountryIds.join(seperator=";");
+        xhttp2.open("GET", "http://api.worldbank.org/v2/countries/" + stringCountries +"/indicators/SP.POP.TOTL?date=2000:2010&format=json", true);
+        xhttp2.send();
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

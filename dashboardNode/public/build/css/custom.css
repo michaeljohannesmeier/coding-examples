@@ -1,0 +1,376 @@
+
+/*----------------------------------------  SIDEBAR  ---------------------------------*/
+/*----------------------------------------           ---------------------------------*/
+/*----------------------------------------           ---------------------------------*/
+
+.sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #1f66a3;
+    overflow-x: hidden;
+    padding-top: 20px;
+    font-family: 'Indie Flower', cursive;
+}
+
+.sidenav-title {
+    padding-bottom: 30px;
+}
+
+
+.sidenav a, .dropdown-btn {
+    text-decoration: none;
+    font-size: 20px;
+    color: lightgrey;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
+
+.dropdown-btn {
+    padding: 6px 8px 6px 16px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 45px;
+}
+
+
+.dropdown-container a:hover, .dropdown-btn:hover {
+    color: #c0c0c0;
+}
+
+.main {
+    margin-left: 200px;
+    font-size: 20px;
+    padding: 0px 10px;
+}
+
+.active {
+    border-right: 6px solid #72deef;
+}
+
+.dropdown-container {
+    display: none;
+    padding-left: 8px;
+    border-right: 6px solid #72deef;
+}
+
+.fa-caret-down {
+    float: right;
+    padding-right: 8px;
+    padding-top: 3px;
+}
+
+@media screen and (max-height: 450px) {
+
+}
+
+
+
+
+
+
+
+
+
+/*----------------------------------------  Humans   ---------------------------------*/
+/*----------------------------------------           ---------------------------------*/
+/*----------------------------------------           ---------------------------------*/
+
+
+
+.checkbox {
+    font-size: 15px;
+    margin-top: 0;
+}
+
+
+.slider {
+     -webkit-appearance: none;
+     width: 50px;
+     height: 20px;
+     background: #d3d3d3;
+     outline: none;
+     opacity: 0.7;
+     -webkit-transition: .2s;
+     transition: opacity .2s;
+ }
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #194276;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #194276;
+    cursor: pointer;
+}
+.containerSlider{
+    width: 80px;
+}
+
+output {
+    position: absolute;
+    background-image: linear-gradient(top, #444444, #999999);
+    width: 40px;
+    height: 30px;
+    text-align: center;
+    color: #194276;
+    border-radius: 10px;
+    display: inline-block;
+    font: bold 15px/30px Georgia;
+    margin-left: -1%;
+}
+output:after {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 10px solid #999999;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    margin-top: -1px;
+}
+.cbExcludeGeoLabel {
+    display: none;
+}
+.divContainer{
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+}
+
+
+.containerSlider {
+    margin: 0 auto;
+}
+
+
+
+.tile_count {
+    margin-bottom: 20px;
+    margin-top: 20px
+}
+.tile_count .tile_stats_count {
+    border-bottom: 1px solid #D9DEE4;
+    padding: 10px 10px 0 20px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative
+}
+
+.tile_count .tile_stats_count:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 65px;
+    border-left: 2px solid #ADB2B5;
+    margin-top: 10px
+}
+.count_top{
+    font-size: 20px;
+    font-family: 'Indie Flower', cursive;
+}
+.count {
+    font-size: 25px;
+    font-family: 'Indie Flower', cursive;
+}
+.count_bottom{
+    font-size: 17px;
+    font-family: 'Indie Flower', cursive;
+}
+
+
+.modebar {
+    display: none
+}
+
+#echart_world_map {
+    margin: auto;
+    width: 90%;
+}
+
+
+#sliderOutput {
+    padding: 0;
+    margin: 0;
+    top: -3px;
+    left: -4px;
+    position: relative;
+    float: right;
+    font-size: 17px;
+    color: #000000;
+    font-family: 'Indie Flower';
+}
+
+.blue {
+    color: #1f77b4
+}
+.purple {
+    color: #9B59B6
+}
+.green {
+    color: #1ABB9C
+}
+.aero {
+    color: #9CC2CB
+}
+.red {
+    color: #E74C3C
+}
+.dark {
+    color: #34495E
+}
+
+
+
+
+
+/*------------------------------POVERTY -------------------------------*/
+
+
+.myCardInfo{
+    margin: 10px 0px 10px 20px;
+    margin-top: 10px;
+    width: 400px;
+    height: 200px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border-left: 2px solid #e2e2e2;
+    border-bottom: 2px solid #e2e2e2;
+    border-right: 1px solid #e2e2e2;
+    border-top: 1px solid #e2e2e2;
+    font-family: 'Indie Flower'
+}
+
+.myCardInfo h3 {
+    color: grey;
+}
+.myCardInfo h2 {
+    color: #1f66a3;
+}
+
+.myCardInfo p {
+    font-size: 18px;
+    color: #1f66a3;
+}
+
+#cardhidden {
+    display: none
+}
+#cardfront {
+    position: relative;
+    top: 30%;
+}
+
+
+
+
+
+
+#chart {
+    width: 800px;
+    height: 400px;
+    background-color: #f7f7f7;
+    margin: 25px auto;
+}
+
+#childPov {
+    width: 800px;
+    height: 400px;
+    background-color: #f7f7f7;
+    margin: 25px auto;
+}
+
+#myButtonUpdateSVG {
+    display: block;
+    margin: 0 auto;
+}
+#myButtonAddSVG {
+    display: block;
+    margin: 0 auto;
+}
+
+#myButtonUpdateSVG2 {
+    display: block;
+    margin: 0 auto;
+}
+
+
+.bar {
+    fill: steelblue;
+}
+
+.bar:hover {
+    fill: brown;
+}
+
+.axis--x path {
+    display: none;
+}
+
+
+
+
+@import url(https://fonts.googleapis.com/css?family=Fjalla+One);
+
+
+.containerTextAnimation {
+    transform: translate(-50%, -50%);
+    top: 20%;
+    left: 70%;
+    display: none;
+    position: absolute;
+    max-width: 400px;
+}
+
+
+.containerTextAnimation h1 {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 42px;
+    margin: 0;
+    line-height: 47px;
+    letter-spacing: 2px;
+}
+
+.titleTextAnimation {
+    transform: translateX(-50%) rotate(-10deg);
+    display: block;
+    float: left;
+    position: relative;
+    color: #e55643;
+}
+.titleTextAnimation span {
+    transform: skew(-10deg);
+    display: block;
+    float: left;
+    text-shadow: #533d4a 1px 1px, #533d4a 2px 2px, #533d4a 3px 3px, #533d4a 4px 4px, #533d4a 5px 5px, #533d4a 6px 6px;
+    min-width: 10px;
+    min-height: 10px;
+    position: relative;
+}
+
+
+
+
+
+
+
+
+

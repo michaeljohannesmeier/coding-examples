@@ -1,0 +1,18 @@
+<div class="row">
+
+  <hr>
+  <table *ngIf="boolButtonPressed" style="width:100%">
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Kids</th>
+    </tr>
+    <tr *ngFor="let oneData of myDataTable">
+      <td>{{ oneData.name }}</td>
+      <td>{{ oneData.age }}</td>
+      <td>{{ oneData.kids }}</td>
+    </tr>
+  </table>
+
+
+</div>

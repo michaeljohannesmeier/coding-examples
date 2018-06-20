@@ -1,0 +1,53 @@
+<h1>Das Leben ist gut mein Freund</h1>
+
+<script>
+
+    // Normal Function
+    function add(x,y){
+        return x + y;
+    }
+    // Async Function
+    async function add(x,y){
+        return x + y;
+    }
+    function doubleAfter2Seconds(x) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+            resolve(x * 2);
+        }, 2000);
+    });
+    }
+/*    doubleAfter2Seconds(10).then((r) => {
+        console.log(r);
+    });*/
+
+/*    let sum = doubleAfter2Seconds(10)+ doubleAfter2Seconds(20) + doubleAfter2Seconds(30);
+    console.log(sum);*/
+
+    function addPromise(x){
+        return new Promise(resolve => {
+            doubleAfter2Seconds(10).then((a) => {
+                doubleAfter2Seconds(20).then((b) => {
+                    doubleAfter2Seconds(30).then((c) => {
+                        resolve(x + a + b + c);
+                    })
+                })
+            })
+        });
+    }
+    addPromise(10).then((sum) => {
+        console.log("this is sum: " + sum);
+    });
+
+    function sayHello() {
+        console.log("Say Hello")
+    };
+    sayHello();
+
+    sayHello2 = function(){
+        console.log("Say Hello 2")
+    }
+    sayHello2();
+
+
+</script>

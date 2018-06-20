@@ -1,0 +1,125 @@
+
+<div class="divContainer">
+    <div class="row tile_count">
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-user"></i> World population</span>
+            <div class="count">7.6 billion</div>
+            <span class="count_bottom"><i class="blue">14% </i> from last 12 years</span>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-sort-amount-up"></i> Annual growth</span>
+            <div class="count">83 million</div>
+            <span class="count_bottom"><i class="blue"><i class="fa fa-sort-asc"></i>1.1% </i> of world population</span>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-users"></i> Prediction 2050</span>
+            <div class="count blue">9,8 billion</div>
+            <span class="count_bottom"><i class="blue"><i class="fa fa-sort-asc"></i>28% </i> more than today</span>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-user-circle"></i> Median age</span>
+            <div class="count">30 years</div>
+            <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>137 million</i> older than 80 years</span>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-wheelchair"></i> Life expectancy</span>
+            <div class="count">71 years</div>
+            <span class="count_bottom"><i class="red"><i class="fa fa-sort-asc"></i>56 years</i> for undeveloped countries</span>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-child"></i> Birth/Death per second</span>
+            <div class="count">4.3 births / 1.8 deaths</div>
+            <span class="count_bottom"><i class="blue"><i class="fa fa-sort-asc"></i>2.5 people </i> more per second</span>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="divContainer row">
+    <div class="col-lg-6">
+        <h3>World Population growth</h3>
+        <h6>from -6000 to year 2100</h6>
+        <br>
+        <br>
+        <div id="myContainerHc" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+
+        <div class="col-lg-3">
+            <h3>China and India</h3>
+            <canvas width=200 height=100 id="myGauge1"></canvas>
+            <div id="value1">37</div>
+            <p>China and India together make up 37% of world´s population</p>
+            <hr>
+            <h3>Poverty</h3>
+            <canvas width=200 height=100 id="myGauge2"></canvas>
+            <div id="value2">15</div>
+            <p>15% of worlds population live in poverty</p>
+        </div>
+        <div class="col-lg-3">
+            <h3>Africa</h3>
+            <canvas width=200 height=100 id="myGauge3"></canvas>
+            <div id="value3">60</div>
+            <p>60% of the African population is under the age of 25, only 5% are 60 or older</p>
+            <hr>
+            <h3>Men vs Woman</h3>
+            <canvas width=200 height=100 id="myGauge4"></canvas>
+            <div id="value4">50.4</div>
+            <p>50.4% of the wold´s population is male and 49.6% female</p>
+        </div>
+
+</div>
+
+
+    <hr>
+<div class="divContainer row">
+    <div class="col-lg-6">
+        <h3>World population by country</h3>
+        <div class="menuChart">
+            <form name="radioButtonForm" >
+                <label class="radio-inline"><input onclick="checkRadioButtonTop()" id="myRadioTopx" checked="checked" type="radio" name="optradio">Top <output id="sliderOutput">10</output></label>
+                <label class="radio-inline"><input onclick="checkRadioButtonInd()" type="radio" name="optradio">Individual</label>
+            </form>
+            <div class="containerSlider">
+                <input data-toggle="tooltip" id="sliderInput" data-placement="right" title="Hooray!" type="range" min="1" max="30" value="10" name="myRange" oninput="sliderOutput.value = sliderInput.value;"  onchange="changeTitleTool(sliderInput.value)" class="slider">
+            </div>
+
+            <div class="checkbox">
+                <label id="cbExcludeGeoLabel"><input onchange="updateSelector()" type="checkbox" value="" id="cbExcludeGeo"><span>Excluede geographic regions</span></label>
+            </div>
+            <select onchange="updateSelectedGraph()" id="myselectpicker" class="selectpicker" multiple data-live-search="true"></select>
+        </div>
+        <div id="myDiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+
+    <div class="col-lg-6">
+        <h3>World Population Map</h3>
+        <h6>from United Nations, Total population, both sexes combined</h6>
+        <br>
+        <br>
+        <div id="echart_world_map" style="height:400px;"></div>
+    </div>
+
+</div>
+
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+<script src="../vendors/jquery/dist/jquery.min.js"></script>
+
+<script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
+
+<!-- Custom Theme Scripts -->
+<script src="../build/js/layout.js"></script>
+
+<script src="/build/js/humans.js"></script>
+
