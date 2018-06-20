@@ -1,0 +1,48 @@
+Arbeitsgruppe PAS Data Analytics
+1. Protokoll 16.12.2016
+
+Anwesend:
+Adrian
+Michael
+Daniel
+
+Agenda:
+1. Organiation Github
+2. Jour fixe - Plattform
+3. Arbeitsteilung
+4. Sonstiges
+
+1. Organisation Github
+Umbenennung der Ordner in PAS-Offline Mit NN into "localVersion", PAS-Server into "serverVersion", FDB into "reportVersion", PAS-App into "standalonesolution" --> Daniel, Master Branch
+Arepo Ordner --> das abspeichern und laden von abgespeicherten Modellen sollte über ein Dropdown Menü erfolgen. Wird zu gegebenen Zeitpunkt aufgearbeitet --> in Evidenz
+Verbinden von Arepo Ordner mit Quandl Ticks --> Michael, Master Branch
+Aufnehmen des automotive showcase in die Datenbank auf hAD --> Adrian, Master Branch
+Ein Ordner für "usefullInformation" füü wichtige Skripte, Packages oder sonstige Informationen. DIe Unterordner künnen dann nach Bedarf angepasst werden. --> Daniel, Master Branch.
+Ein Ordner für Protokolle --> Daniel, Master Branch
+Benutzerhandbuch --> alte Versionen auf V-Laufwerk, wird in Evidenz gehalten 
+
+Unterteilung in Branches
+SQL-Schnittstelle-HAD --> Adrian
+Quandl-and-Data-Impor --> Michael
+Regression --> Daniel
+
+2. Jour fixe - Plattform
+Jour fixe: Freitags 14:30 Uhr CET mit Adrian über Webex (Adrian setzt Webex auf)
+
+3. Arbeitsteilung
+Michael:
+Evaluation mit BloomberTerminal, zugriff und laden der live-Daten in die PAS.
+
+Adrian:
+Datenbankverbindung platzieren und Use Cases definieren. Evaluieren wie die Celonis, Process Mining und die PAS harmonieren. Wie könnte man das aufziehen? 
+Für Daimler hierarchical time series --> wie könnte man das in die PAS einbinden.
+
+Daniel:
+Regulierte Modell für Regression und Kernel Regression in die PAS aufnehmen. 
+
+Michale und Adrian:
+Aufnahme von kategorischen Variablen in die PAS.
+
+
+Nächster Termin 13:30 Uhr
+Adrian setzt die Webex auf. 

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
+
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row" style="background-color: #ffffff">
+            <div class="col-md-2 col-sm-2" id="sidevar">
+                <div class="hidden-xs" id="sidebar">
+                    <img id="meImage" src="/images/me.jpg">
+                    </br>
+                    </br>
+                    </br>
+                    <div class="container-fluid" style="margin: 0 auto;">
+                        <p style="text-align: center;">M.Sc Business Management</p>
+                        <p style="text-align: center;">B.Sc Economics</p>
+                        <p style="text-align: center;">B.A Politics</p>
+                        <p style="text-align: center;">Statistics</p>
+                        <p style="text-align: center;">Machine Learning</p>
+                        <p style="text-align: center;">Programming Skills</p>
+                        <p style="text-align: center;">IT Affinity</p>
+                        <p style="text-align: center;">Time Series Prediction</p>
+                        <p style="text-align: center;">Capital Markets / Banking</p>
+                    </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10" style="background-color: #ffffff">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/cv">CV</a></li>
+                        <li><a href="/skills">Skills</a></li>
+                        <li><a href="/projects">Projects</a></li>
+                        <li><a href="/examples">Example pages</a></li>
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+        </div>
+        <div class="col-md-10 col-sm-10" style="background-color: #ffffff">
+        {{{ body }}}
+        </div>
+    </div>
+</div>
+
+
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdn.rawgit.com/kimmobrunfeldt/progressbar.js/0.5.6/dist/progressbar.js"></script>
+
+<script src="/javascripts/cv.js"></script>
+<script src="/javascripts/skills.js"></script>
+<script src="/javascripts/index.js"></script>
+
+
+</body>
+</html>
+
+

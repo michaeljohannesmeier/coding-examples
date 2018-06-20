@@ -1,0 +1,87 @@
+body {
+  padding: 0px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#meImage {
+  max-width: 100%;
+  display:block;
+  height: auto;
+  border-radius: 8px;
+}
+
+#cvImage {
+  max-width: 100%;
+  display:block;
+  height: auto;
+  border-radius: 8px;
+}
+
+#sidebar {
+  padding-top: 18px;
+  background-color: #ffffff;
+}
+
+#sidevar {
+  background-color: #ffffff;
+}
+
+.customHr {
+  width: 95%;
+  font-size: 1px;
+  color: rgba(0, 0, 0, 0);
+  line-height: 1px;
+  background-color: grey;
+  margin-bottom: 10px;
+}
+
+.containerClass {
+  padding: 0px;
+  width: 80px;
+  border: 0px;
+  padding-top: 0px;
+  padding-left: 0px;
+}
+
+.skills {
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+  font-family: Aparajita;
+
+}
+.colSkillNames {
+  float:left;
+  display: inline-block;
+  width: 150px;
+  height: 30px;
+}
+.colSkillNames2 {
+  float: left;
+  width: 70px;
+  height: 30px;
+}
+
+#slider {
+  width: 720px;
+  height: 400px;
+  overflow: hidden;
+}
+
+#slider .slides {
+  display: block;
+  width: 6000px;
+  height: 400px;
+  margin: 0;
+  padding: 0;
+}
+
+#slider .slide {
+  float: left;
+  width: 720px;
+  height: 400px;
+}

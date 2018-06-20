@@ -1,0 +1,163 @@
+DROP TABLE registration;
+CREATE TABLE registration (
+  id int PRIMARY KEY NOT NULL IDENTITY(1,1),
+  email varchar(255),
+  password varchar(255),
+  firstName varchar(255),
+  lastName varchar(255),
+  street varchar(255),
+  numberHouse varchar(255),
+  zip varchar(255),
+  city varchar(255)),
+  orderedStatus bit default 0;
+
+DROP TABLE orders;
+CREATE TABLE orders (
+  orderId INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+  customerEmail varchar(255),
+  customerId int,
+  description varchar(255),
+  name varchar(255),
+  orderedDate varchar(50),
+  productId int,
+  status varchar(255)
+);
+
+DROP TABLE regkeys;
+
+CREATE TABLE regkeys (
+  id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+  dateUsed datetime,
+  emailUsed text,
+  regKeys varchar(255),
+  used bit
+);
+
+SET IDENTITY_INSERT regkeys ON;
+INSERT INTO regkeys (id, dateUsed, emailUsed, regKeys, used) 
+VALUES  (1, NULL, NULL, 111111, 0),
+(2, NULL, NULL, 222222, 0),
+(3, NULL, NULL, 333333, 0),
+(4, NULL, NULL, 444444, 0),
+(5, NULL, NULL, 555555, 0),
+(6, NULL, NULL, 666666, 0),
+(7, NULL, NULL, 777777, 0),
+(8, NULL, NULL, 888888, 0),
+(9, NULL, NULL, 999999, 0),
+(10, NULL, NULL, 101010101010, 0),
+(11, NULL, NULL, 111111111111, 0),
+(12, NULL, NULL, 121212121212, 0),
+(13, NULL, NULL, 131313131313, 0),
+(14, NULL, NULL, 141414141414, 0),
+(15, NULL, NULL, 151515151515, 0),
+(16, NULL, NULL, 161616161616, 0),
+(17, NULL, NULL, 171717171717, 0),
+(18, NULL, NULL, 181818181818, 0),
+(19, NULL, NULL, 191919191919, 0),
+(20, NULL, NULL, 202020202020, 0),
+(21, NULL, NULL, 212121212121, 0),
+(22, NULL, NULL, 222222222222, 0),
+(23, NULL, NULL, 232323232323, 0),
+(24, NULL, NULL, 242424242424, 0),
+(25, NULL, NULL, 252525252525, 0),
+(26, NULL, NULL, 262626262626, 0),
+(27, NULL, NULL, 272727272727, 0),
+(28, NULL, NULL, 282828282828, 0),
+(29, NULL, NULL, 292929292929, 0),
+(30, NULL, NULL, 303030303030, 0),
+(31, NULL, NULL, 313131313131, 0),
+(32, NULL, NULL, 323232323232, 0),
+(33, NULL, NULL, 333333333333, 0),
+(34, NULL, NULL, 343434343434, 0),
+(35, NULL, NULL, 353535353535, 0),
+(36, NULL, NULL, 363636363636, 0),
+(37, NULL, NULL, 373737373737, 0),
+(38, NULL, NULL, 383838383838, 0),
+(39, NULL, NULL, 393939393939, 0),
+(40, NULL, NULL, 404040404040, 0),
+(41, NULL, NULL, 414141414141, 0),
+(42, NULL, NULL, 424242424242, 0),
+(43, NULL, NULL, 434343434343, 0),
+(44, NULL, NULL, 444444444444, 0),
+(45, NULL, NULL, 454545454545, 0),
+(46, NULL, NULL, 464646464646, 0),
+(47, NULL, NULL, 474747474747, 0),
+(48, NULL, NULL, 484848484848, 0),
+(49, NULL, NULL, 494949494949, 0),
+(50, NULL, NULL, 505050505050, 0),
+(51, NULL, NULL, 515151515151, 0),
+(52, NULL, NULL, 525252525252, 0),
+(53, NULL, NULL, 535353535353, 0),
+(54, NULL, NULL, 545454545454, 0),
+(55, NULL, NULL, 555555555555, 0),
+(56, NULL, NULL, 565656565656, 0),
+(57, NULL, NULL, 575757575757, 0),
+(58, NULL, NULL, 585858585858, 0),
+(59, NULL, NULL, 595959595959, 0),
+(60, NULL, NULL, 606060606060, 0),
+(61, NULL, NULL, 616161616161, 0),
+(62, NULL, NULL, 626262626262, 0),
+(63, NULL, NULL, 636363636363, 0),
+(64, NULL, NULL, 646464646464, 0),
+(65, NULL, NULL, 656565656565, 0),
+(66, NULL, NULL, 666666666666, 0),
+(67, NULL, NULL, 676767676767, 0),
+(68, NULL, NULL, 686868686868, 0),
+(69, NULL, NULL, 696969696969, 0),
+(70, NULL, NULL, 707070707070, 0),
+(71, NULL, NULL, 717171717171, 0),
+(72, NULL, NULL, 727272727272, 0),
+(73, NULL, NULL, 737373737373, 0),
+(74, NULL, NULL, 747474747474, 0),
+(75, NULL, NULL, 757575757575, 0),
+(76, NULL, NULL, 767676767676, 0),
+(77, NULL, NULL, 777777777777, 0),
+(78, NULL, NULL, 787878787878, 0),
+(79, NULL, NULL, 797979797979, 0),
+(80, NULL, NULL, 808080808080, 0),
+(81, NULL, NULL, 818181818181, 0),
+(82, NULL, NULL, 828282828282, 0),
+(83, NULL, NULL, 838383838383, 0),
+(84, NULL, NULL, 848484848484, 0),
+(85, NULL, NULL, 858585858585, 0),
+(86, NULL, NULL, 868686868686, 0),
+(87, NULL, NULL, 878787878787, 0),
+(88, NULL, NULL, 888888888888, 0),
+(89, NULL, NULL, 898989898989, 0),
+(90, NULL, NULL, 909090909090, 0),
+(91, NULL, NULL, 919191919191, 0),
+(92, NULL, NULL, 929292929292, 0),
+(93, NULL, NULL, 939393939393, 0),
+(94, NULL, NULL, 949494949494, 0),
+(95, NULL, NULL, 959595959595, 0),
+(96, NULL, NULL, 969696969696, 0),
+(97, NULL, NULL, 979797979797, 0),
+(98, NULL, NULL, 989898989898, 0),
+(99, NULL, NULL, 999999999999, 0),
+(100, NULL, NULL, 100100100100100100, 0);
+SET IDENTITY_INSERT regkeys ON;
+
+
+create table Session
+(
+  sessionId nvarchar(450) not null primary key,
+  sessionData nvarchar(max) null,
+  lastTouchedUtc datetime not null  
+)
+i=1
+for(i in 1:100){
+  print(paste0("(", i, ", NULL, NULL, ", paste(rep(i, 6), collapse = ""), ", 0)," ))
+  write(paste0("(", i, ", NULL, NULL, ", paste(rep(i, 6), collapse = ""), ", 0)," ),
+        file = "sqlInsertKeys",
+        append = TRUE, sep = "\n")
+}
+
+paste(rep(1, 6), collapse = "")
+library(RODBC)
+mydb <- odbcConnect("MyODBCAzure", uid = "HelperPageRoot", pwd = "Password123")
+
+setwd("C:/Users/Administrator/Desktop/webPages/express-cc-master")
+products <- read.csv("products.csv", sep = ";")
+sqlSave(mydb, products)
+
+

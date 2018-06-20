@@ -1,0 +1,40 @@
+Arbeitsgruppe PAS Data Analytics
+5. Protokoll 20.01.2017
+
+Anwesend:
+Adrian
+Michael
+Daniel
+
+Agenda:
+1. Fortschritt
+2. ToDo
+3. Nächste Tasks
+
+
+1. Fortschritt:
+Daniel --> Backtesting wurde glatt gezogen
+Adrian --> VAR wird laufend eingearbeitet
+Michael --> Einzelne Datums können jetzt gelöscht werden, Kategoriale Variable erstellen!! Die Farbgebung wurde angepasst und viele neue Visualisierungen wurden eingebaut.
+
+2. ToDo:
+CrossValidation ins MReg Modell einbauen. Ein eigenes Panel anlegen, 10 besten Timelags anzeigen und mittels klick in ein manueles Modell laden. --> Daniel
+WebSolution PAS --> Adrian
+
+3. Nächste Tasks:
+TensorFlow-Package für NN: es wir eine python Installation benötigt. Zum testen kann hier erst mal ein Projektrechner verwendet werden. Zudem mal beim IT-Desk bzgl. einer Installation von Python auf 
+den Dienstrechnern nachfragen --> Michael
+
+VAR-Modelle von Adrian und CrossValidation von Daniel --> anschließend Stopp und glatt ziehen: Code aufräumen, Bedienungshilfe schreiben und für einen Kunden möglichst stabil hinbekommen
+Übersichtsblatt über die globalen Variablen
+
+
+
+
+Nächster Termin 27.01.2017 14:30 Uhr
+Title: PAS - Die Codies
+Start Time: 20/01/2016 15:45 PM
+Host: Daniel Haller
+Event Id: 1561092
+Meeting Number: 845358087
+Host Key: 340907

@@ -1,0 +1,49 @@
+{{> header }}
+
+  <h2>{{ title }}</h2>
+	</br>
+	</br>
+	<form id="changeprofile" action="/profile/settings/changeprofile" method="post">
+
+		<div class="container">
+
+				<div class="input">
+					<label for="firstName">Vorname</label>
+					<input class="form-control" type="text" id="firstName" name="firstName" value = "{{ results.firstName }}" >
+				</div>
+				<div class="input">
+					<label for="lastName">Nachname</label>
+					<input class="form-control" type="text" id="lastName" name="lastName" value = {{ results.lastName }} >
+				</div>
+				<div class="input">
+					<label for="street">Strasse</label>
+					<input class="form-control" type="text" id="street" name="street" value = {{ results.street }} >
+				</div>
+				<div class="input">
+					<label for="numberHouse">Hausnummer</label>
+					<input class="form-control" type="text" id="numberHouse" name="numberHouse" value = {{ results.numberHouse }} >
+				</div>
+				<div class="input">
+					<label for="zip">Plz</label>
+					<input class="form-control" type="text" id="zip" name="zip" value = {{ results.zip }} >
+				</div>
+				<div class="input">
+					<label for="city">Ort</label>
+					<input class="form-control" type="text" id="city" name="city" value = {{ results.city }} >
+				</div>
+				<div class="input">
+					<label for="email">Email</label>
+					<input class="form-control" type="text" id="email" name="email" value = {{ results.email }} >
+				</div>
+				<button class="btn btn-primary" type="submit">Benutzedaten speichern</button>
+			    <a href="/profile/settings"><button class="btn btn-primary" type="button" formnovalidate>Abbrechen</button></a>
+		</div>
+	</form>
+
+
+<script type="text/javascript" src="/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<script src="/javascripts/validation.js"></script>
+
+
+{{> footer-end }}

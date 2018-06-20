@@ -1,0 +1,50 @@
+############## PAS-APP ##############
+Im Ordner PAS-App befinden sich alle nötigen Programme und Files die für die Erzeugung der 
+Stand-Alone-Applikation notwendig sind. Anbei eine kurzer Erläuterung:
+
+Ordnerstruktur:
+Ordner
+- GoogleChromePortable
+- R-Portable
+- shiny
+Ausführungsdateien
+- run.bat
+- runShinyApp.R
+
+
+Im Ordner GoogleChromePortable befindet sich eine mobile Version von Chrome. Sie ist notwendig
+um die PAS ohne Voraussetzungen an den Server starten zu können. Hier sind keine Änderungen
+oder Ergänzungen vorzunehmen.
+
+Im Ordner R-Portable befindet sich eine mobile Verion von R. Sie wird benötigt, damit die
+PAS ohne Vorinstallation von R oder R-Studio ausgeführt werden kann. R läuft dabei im Hintergrund.
+WICHTIG: Vor dem Compilieren sollte geprüft werden, ob die mobile R-Version alle notwendigen Packete
+enthält und gegebenenfalls sollten diese ergänzt werden bzw. veraltete Packete aktualisiert werden.
+Zum Öffnen einfach unter "R-Portable" --> R-Portable.exe ausführen und die einfachen R-Befehle
+in der Konsole ausführen.
+
+Die aktuelle PAS-Version kann dabei einfach mittels Copy&Paste in den Ordner "shiny" eingefügt
+werden. Zusätzlich sollten sich im Ordner 
+- das Logo als Logo.ico (Icon-Datei) befinden 
+- sowie die AGB in deutscher und englischer Sprache als .rtf (Rich-Text-Format) File.
+
+Zum Ausführen der Applikation benötigen wir zwei Skripte:
+- runShinyApp.R: Ein R-Rksipt das die "shiny" Packete lät und die App mittels "runApp()" ausführt
+- die Ausführungsdatei run.exe das R-Portable einbindet.
+
+Diese Applikation run.exe wird dadurch erzeugt, dass run.bat mittels online Umwandlung in eine
+exe überführt wird. In der run.bat sind alle wichtigen Einstellungen vorgenommen. Auch was die
+TestZeit anbelangt
+
+############## Inno Setup ##############
+Für die Erzeugung der Installationsdatei mittels Inno Setup ist das Test.iss skript notwendig. 
+Im Skript wird auf das Icon verwiesen, welches sich unter shiny befinden sollte.
+Zudem benötigt es die deutschen und englischen AGB, die sich ebenfalls im selben Ordner befinden
+sollten. Zudem sollte die Ausführungsdatei run.exe als Verlinkung abgespeichert werden, damit
+das Icon verändert werden kann. 
+
+Die Ordnerstruktur sollte wie folgt aussehen:
+
+- PAS-App\shiny\Logo.ico
+- PAS-App\shiny\AGB_deutsch.rtf
+- PAS-App\run.lnk

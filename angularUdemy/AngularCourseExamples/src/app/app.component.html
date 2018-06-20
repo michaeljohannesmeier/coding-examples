@@ -1,0 +1,19 @@
+<app-subone [exposedProperty]="'test'" (emittedProperty)="catchEvent($event)"></app-subone>
+<app-subtwo><p>Here is a text coming from parent using ng-content -- </p> <p #tagInParentNgContent>{{ propertyToPassToChildWithNgContent }}</p></app-subtwo>
+
+
+<p>Property of parent but value set from child via event emitter is {{ propertyOfAppComponentButFromChild }}</p>
+
+
+<p>Property exposed to child: {{ propertyExposedToChild }}</p>
+
+<div *appUnless="false">Content with own structural directive</div>
+
+
+<div [ngSwitch]="valueForSwith">
+  <p *ngSwitchCase = "100">Value is 100</p>
+  <p *ngSwitchCase = "5">Value is 5</p>
+  <p *ngSwitchCase = "30">Value is 30</p>
+
+
+</div>

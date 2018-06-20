@@ -1,0 +1,79 @@
+{{> header }}
+
+  <h2>Registrierung</h2>
+
+
+
+	<form id="registrateForm" action="/registration/submit" method="post">
+
+		<div class="container">
+
+				<div class="input">
+					<label for="firstName">Vorname</label>
+					<input class="form-control" type="text" id="firstName" name="firstName">
+				</div>
+				<div class="input">
+					<label for="lastName">Nachname</label>
+					<input class="form-control" type="text" id="lastName" name="lastName">
+				</div>
+				<div class="input">
+					<label for="street">Strasse</label>
+					<input class="form-control" type="text" id="street" name="street">
+				</div>
+				<div class="input">
+					<label for="numberHouse">Hausnummer</label>
+					<input class="form-control" type="text" id="numberHouse" name="numberHouse">
+				</div>
+				<div class="input">
+					<label for="zip">Plz</label>
+					<input class="form-control" type="text" id="zip" name="zip">
+				</div>
+				<div class="input">
+					<label for="city">Ort</label>
+					<input class="form-control" type="text" id="city" name="city">
+				</div>
+				<div class="input">
+					<label for="email">Email</label>
+					<input class="form-control" type="text" id="email" name="email">
+				</div>
+				<div class="input">
+					<label for="emailConfirm">Email bestätigen</label>
+					<input class="form-control" type="text" id="emailConfirm" name="emailConfirm">
+				</div>
+
+				<div class="input">
+					<label for="password">Passwort</label>
+					<input class="form-control" type="password" id="password" name="password">
+				</div>
+
+				<div class="input">
+					<label for="confirmPassword">Passwort bestätigen</label>
+					<input class="form-control" type="password" id="confirmPassword" name="confirmPassword">
+				</div>
+				<div class="input">
+					<label for="regKey">Registrierungsschlüssel</label>
+					<input class="form-control" type="text" id="regKey" name="regKey">
+				</div>
+                </br>
+                <p style="width: 600px">Hier noch nicht vergebene Registrierungssschlüssel. Die Anzeige hier ist nur zu Testzwecken. Der Registrierungsschlüssel wird dem User normalerweiße zugeordnet.</p>
+                <p>Freie Registrierungsschlüssel:</p>
+                {{#each regkeys}}
+                    <p style="display:inline">{{ regkeys }}, </p>
+                {{/each}}
+				<button style="display:block" class="btn btn-primary" type="submit">Registrieren</button>
+
+
+		</div>
+	</form>
+
+
+
+<script type="text/javascript" src="/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<script src="/javascripts/validation.js"></script>
+
+
+
+
+
+{{> footer-end }}

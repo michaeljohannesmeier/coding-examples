@@ -1,0 +1,14 @@
+
+
+
+<div class="card floater">
+  <img class="card-img-top" [src]="'data:jpg;base64,' +  fahrrad.image.data | unsafe " alt="Fahrrad" style="width:100%">
+  <div class="card-body">
+      <h5 style="float: left">{{ fahrrad.name }}</h5>
+      <h5 style="float: right">{{ fahrrad.price }}€ </h5>
+      <p style="clear: left" class="card-text">{{ fahrrad.descriptionShort }}</p>
+      <a [routerLink]="'detail/' + [id]" class="btn btn-primary">Details</a>
+  </div>
+</div>
+
+

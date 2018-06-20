@@ -1,0 +1,21 @@
+<!--String interpolation -->
+<p>String interpolations</p>
+<p>Server with ID {{ serverId }} is {{ serverStatus }}</p>
+
+<!--ngStyle-->
+<p [ngStyle]="{backgroundColor: getColor()}">Server status called with method is {{ getServerStatus() }}>Server with ID {{ serverId }} is {{ serverStatus }}</p>
+
+<!--ngClass-->
+<p [ngClass]="{online: serverStatus === 'online'}" [ngStyle]="{backgroundColor: getColor()}">Server status called with method is {{ getServerStatus() }}>Server with ID {{ serverId }} is {{ serverStatus }}</p>
+
+
+<hr>
+
+
+
+<button class="btn btn-primary" (click)="changeDetailBool()">Details</button>
+
+<p [ngStyle]="{display: getDisplay()}"> {{ secretPassowrt }}</p>
+<p [ngStyle]="{backgroundColor: elements > 5 ? 'blue' : 'green'}" *ngFor="let elements of clickArray">{{elements}}</p>
+
+

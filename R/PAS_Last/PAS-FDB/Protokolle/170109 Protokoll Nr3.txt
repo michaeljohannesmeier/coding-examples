@@ -1,0 +1,50 @@
+Arbeitsgruppe PAS Data Analytics
+3. Protokoll 09.01.2017
+
+Anwesend:
+Adrian
+Michael
+Daniel
+
+Agenda:
+1. Fortschritt
+2. Fehler
+3. Aufgabenverteilung
+4. Weihnacht
+5. Sonstiges
+
+1. Fortschritt
+Michael:
+Heat Map wurde in die Datenanalyse aufgenommen.
+Scatterplots wurden mit plotly implementiert. Über die plotly-Webseite kann auf die Grafiken zugegriffen und für etwaige Präsentationen gezogen und angepasst werden. Zudem ist nun ein mehrdimensionaler
+plot möglich und man sieht wie sich die Variablen über die Zeit veränder haben. Bis zu 5-dimensional möglich (x,y,z)-Achsen + Farbe + Größe der Punkte.
+ToDo -> ScatterPlots Achsenbeschriftung für Korrelation setzen. Überlegung ob man die Anzahl an Variablen variabel halten kann, momentan ist die Anzahl nach oben durch 5 beschränkt.
+
+Adrian + Daniel:
+Dynamische Möglichkeit in der Regressionsanalyse. Es kann nun ausgewählt werden, mehrere Timelags einer Variable aufzunehmen. Man kann gut erkennen, wie die regularisierten Methoden arbeiten.
+FEHLER-MELDUNG: Choose Amount of dependent lags = 12 --> 4.1.0 #640 --> Adrian
+Adrian --> Anpassen der Plots auf plotly
+Daniel --> CrossValidation in Regressionsanalyse einbauen, UI für das Zusammenlegen von automatischer und manueller Regression
+Diese Methode wurde auch mit Monte-Carlo Simulation glatt gezogen
+
+2. Hierarchical Time Series
+Eigene Shiny-App schreiben zur Visualisierung und Strukturierung. Für die einzelnen Modelle kann dan die PAS verwendet werden. Die kreierte Modelle können anschließend in die neue Shiny-App geladen werden.
+Daniel --> rücksprache mit Alex, was er sich da vorgestellt hat. Zwei Vorschläge: in der PAS oder extern.
+Datenbank mit sämtlichen Daten abspeichern. Laden der Forecast-Modelle in die externe App. 
+
+3. Next Steps
+Alles in Plotly überführen
+Reportfunktion einbauen
+Michael --> Neuronale Netze
+Adrian --> Montecarlo Simulation glatt ziehen
+Daniel --> Conflict zum mergen lösen
+Adrian + Daniel --> Backtesting und Cross Validation glatt ziehen
+
+
+Nächster Termin 13.01.2017 15:00 Uhr
+Title: PAS - Die Codies
+Start Time: 09/01/2016 2:30 PM
+Host: Daniel Haller
+Event Id: 1561092
+Meeting Number: 845358087
+Host Key: 340907

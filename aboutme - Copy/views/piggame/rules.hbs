@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,600" rel="stylesheet" type="text/css">
+    <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="../stylesheets/piggame.css">
+
+    <title>Pig Game</title>
+</head>
+
+<body>
+<div class="wrapper clearfix">
+    <div class="player-0-panel">
+
+    </div>
+    <div class="player-1-panel">
+
+    </div>
+
+    <button onclick="window.location.href='/piggame'" class="btn-help"><i class="ion-arrow-left-a"></i>Back</button>
+    <p class="rulesHeadline">Rules</p>
+    <p class="rulesExplanation">Goal<br/>
+        Be the first player to reach 100 points.<br/><br/>
+        Gameplay<br/>
+        On a turn, a player rolls the die repeatedly until either:<br/>
+        A 1 is rolled<br/>
+        The player chooses to hold (stop rolling)<br/>
+        If a 1 is rolled, that player's turn ends and no points are earned.<br/>
+        If the player chooses to hold, all of the points rolled during that turn are added to his or her score.<br/><br/>
+        Scoring Examples<br/>
+        Example 1: Sherri rolls a 3 and decides to continue. She then chooses to roll seven more times (6, 6, 6, 4, 5, 6, 1). Because she rolled a 1, Sherri's turn ends and she earns 0 points.<br/>
+        Example 2: Craig rolls a 6 and decides to continue. He then chooses to roll four more times (3, 4, 2, 6) and decides to hold. Craig earns 21 points for this turn (6+3+4+2+6=21).<br/><br/>
+        Game End<br/>
+        When a player reaches a total of 100 or more points, the game ends and that player is the winner.</p>
+
+
+
+</div>
+<script src="javascrips/piggame.js"></script>
+</body>
+</html>

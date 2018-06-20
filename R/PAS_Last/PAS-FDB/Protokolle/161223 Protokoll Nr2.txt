@@ -1,0 +1,47 @@
+Arbeitsgruppe PAS Data Analytics
+2. Protokoll 23.12.2016
+
+Anwesend:
+Adrian
+Michael
+Daniel
+
+Agenda:
+1. Fortschritt
+2. Fehler
+3. Aufgabenverteilung
+4. Weihnacht
+5. Sonstiges
+
+1. Fortschritt
+Michael präsentiert seinen Teil von Quandl. 
+ToDo: Visualisierung mit Boxplot für Variablen erweitern um Ausreißer vorab zu filtern.
+Collapse complete cases --> wie erfolgt die Aggregation von Tagesdaten auf Monatsdaten.
+
+
+2. Fehler
+Issue pro Fehler, mit Erklärung Branche --> ZUordnung. Mit Screenshots und Beschreibung von skripten wo der Fehler liegen könnte.
+
+3. Aufgabenverteilung
+Daniel --> Debug calculate.data.lags Task 2, Visualisierung der Crossvalidierung --> plotly, Verschiedene Fehlerindizes --> dropdown-Menü, anschließend übernahme in manuelle Regressionsmethoden
+Adrian --> Saisonaltität bei Regularisierungsmethoden, Kombination von Step AIC und CrossValidation bei allgemeinen Regressionmodellen, zusammenführung von automatisch und manueller Regression
+Michael --> Neuronale Netze, Code anschauen, Use Cases überlegen, Time-Lags --> sinnvoll?
+
+4. Weihnachten
+
+
+5. Sonstiges
+Mxnet gibts jetzt auch für Linux. Die serverVersion kann demnach erstmal von github genommen werden --> Daniel im Master
+Testserver im Januar --> Adrian
+Microsoft R Server Version 9.0.1 --> Package MicrosoftML --> Michael (Architektur des neuronalen Netzes definieren)
+policy für packages --> updates von packages, --> in Evidenz
+
+
+
+Nächster Termin 05.01.2017 --:-- Uhr
+Title: PAS - Die Codies
+Start Time: 12/23/2016 2:30 PM
+Host: Daniel Haller
+Event Id: 1561092
+Meeting Number: 845358087
+Host Key: 340907

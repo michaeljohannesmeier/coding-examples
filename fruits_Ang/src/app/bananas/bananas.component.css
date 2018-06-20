@@ -1,0 +1,67 @@
+
+.bananaImages {
+  width: 100%;
+  height: 30vw;
+}
+.carousel-caption h3 {
+  color: #ffc50e !important;
+  font-size: 1.2em;
+}
+
+.carousel-caption {
+  color: white !important;
+  bottom:-120px;
+
+}
+.carousel-inner {
+  padding-bottom:120px;
+}
+
+.carousel-indicators li {
+  background-color: white;
+}
+.carousel-indicators li:hover{
+  cursor: pointer;
+}
+.carousel-indicators .active {
+  background-color: #ffc50e;
+}
+
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+}
+
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+}
+
+hr {
+  background-color: #ffc50e;
+  height: 1px;
+  width: 30%;
+
+}
+
+.item {
+  color: white;
+  margin: auto;
+  width: 80%;
+  padding: 50px;
+  border: 1px solid #ffc50e;
+  display: inline-block;
+}
+
+
+.jumbotron {
+  background-color: #ffc50e;
+  padding: 0 30px 30px 30px;
+}
+
+@media only screen and (min-width: 1140px) {
+  .item {
+    width: 50%;
+  }
+}
+
+
+

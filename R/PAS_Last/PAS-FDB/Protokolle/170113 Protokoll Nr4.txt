@@ -1,0 +1,45 @@
+Arbeitsgruppe PAS Data Analytics
+4. Protokoll 13.01.2017
+
+Anwesend:
+Adrian
+Michael
+Daniel
+
+Agenda:
+1. Fortschritt
+2. Fehler
+3. Aufgabenverteilung
+4. Weihnacht
+5. Sonstiges
+
+1. Fortschritt:
+Michael:
+Scatter Plot sind jetzt mit mehr als 5 Variablen möglich.
+Daniel: 
+Visualisierung CrossValidation angefangen
+Adrian:
+VAR-Forecast in MReg Modell.
+
+2. ToDo:
+Michael:
+NN
+Daniel:
+Var-Modelle Tables in Data.table umwandeln + Debgugging
+Rücksprache mit Frauke was für die Präsentation benötigt wird. Dann kann die PAS entsprechend reduziert werden.
+Adrian:
+Forecast der unabhängigen Variablen mittels VAR.
+
+3. Nächste Tasks:
+Ein Dashboard für Präsentation entwickeln, in der einfach Modelle und Informationen präsentiert werden können. 
+
+
+
+
+Nächster Termin 20.01.2017 14:30 Uhr
+Title: PAS - Die Codies
+Start Time: 09/01/2016 2:30 PM
+Host: Daniel Haller
+Event Id: 1561092
+Meeting Number: 845358087
+Host Key: 340907

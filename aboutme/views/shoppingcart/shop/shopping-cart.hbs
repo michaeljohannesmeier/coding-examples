@@ -1,0 +1,56 @@
+
+
+<div class="row">
+    <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+        <h3 class="text-center">Shopping Cart</h3>
+        <br>
+
+        {{#if products }}
+
+            <table style="width:100%">
+                <tr>
+                    <th width="40%">Product</th>
+                    <th class="shopping-cart-quantColumn" width="30%">Quantity</th>
+                    <th class="shopping-cart-priceColumn" width="30%">Price</th>
+                </tr>
+
+                {{# each products }}
+                    <tr>
+                        <td>{{ this.item.title }}</td>
+                        <td class="shopping-cart-quantColumn">
+                            <div class="shopping-cart-divContainerPlusMinus">
+                                {{ this.qty}}
+                                <a href="/shoppingcart/increase/{{this.item._id}}"><i class="fas fa-plus-square"></i></a>
+                                <a href="/shoppingcart/reduce/{{this.item._id}}"><i class="fas fa-minus-square"></i></a>
+                            </div>
+                        </td>
+                        <td class="shopping-cart-priceColumn">€{{ this.price }}</td>
+                    </tr>
+                {{/each}}
+            </table>
+
+
+
+            <br>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <strong>Total: €{{ totalPrice }}</strong>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <a href="/shoppingcart/checkout" type="button" class="btn btn-success">Checkout</a>
+                </div>
+            </div>
+        {{else}}
+        <div class="row">
+
+            <h4 class="text-center">There are currently no items in your shopping cart</h4>
+
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+

@@ -1,0 +1,149 @@
+
+.scrollbody {
+  position: relative;
+}
+
+.blackBackground {
+  display: inline-block;
+  background-color: black;
+  z-index: 10;
+  bottom:0px;
+  position: fixed;
+  width: 100%;
+}
+
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  background-color: black;
+  color: #ffc50e;
+}
+.nav-item .active {
+  background-color: darkred;
+  color: black;
+}
+.enabled {
+  cursor:pointer;
+}
+
+.containerContent {
+  margin-rigth: 20%;
+}
+
+.myBackground {
+  max-width: 100%;
+  border-radius: 200px;
+  width: 80vw;
+}
+
+.myBackground2 {
+  max-width: 80%;
+  border-radius: 200px;
+  width: 80vw;
+}
+
+.myBackground4 {
+  max-width: 80%;
+  border-radius: 200px;
+  width: 40vw;
+}
+
+.myBackground, .myBackground2, .myBackground3, .myBackground4 {
+  margin-left: 50px;
+}
+
+
+.headlineStory {
+  color: white;
+  padding-left: 50px;
+}
+
+.section1, .section2, .section3, .section4, .section5 {
+  color: #ffc50e;
+  margin-left: 50px;
+  max-width: 100%;
+}
+
+.section1 h3, .section2 h3, .section3 h3, .section4 h3, .section5 h3 {
+  color: darkred;
+}
+
+.jumbotron {
+  background-color: darkred;
+}
+
+
+.inMobileImg{
+  display: inline-block;
+}
+.outMobileImg {
+  display: none
+}
+
+.brWrapper  {
+  display: none;
+}
+
+.brWrapperNegative  {
+  display: inline-block;
+}
+
+
+@media only screen and (min-width: 1200px) {
+  ul.nav-pills {
+    top: 20px;
+    position: fixed;
+    display: inline-block;
+  }
+  .blackBackground {
+    position: relative;
+  }
+  .section1 {
+    color: #ffc50e;
+    margin-right: 40%;
+    margin-left: 10%;
+  }
+  .section2 {
+    color: #ffc50e;
+    margin-left: 20%;
+  }
+  .section3 {
+    margin-right: 40%;
+    margin-left: 20%;
+    color: #ffc50e;
+  }
+  .section4 {
+    margin-left: 20%;
+    margin-right: 10%;
+    color: #ffc50e;
+  }
+  .section5 {
+    margin-right: 20%;
+    color: #ffc50e;
+  }
+
+  .outMobileImg{
+    display: inline-block;
+  }
+  .inMobileImg {
+    display: none
+  }
+  .brWrapper  {
+    display: inline-block;
+  }
+  .brWrapperNegative  {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .myBackground, .myBackground2, .myBackground3, .myBackground4 {
+  width: 40vw;
+  }
+  .blackBackground {
+    width: 100vw;
+  }
+}
+
+

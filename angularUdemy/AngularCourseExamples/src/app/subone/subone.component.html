@@ -1,0 +1,40 @@
+<p (mouseleave)="myFunctionMouseLeave($event)">
+  subone works!
+</p>
+
+<!--String Interpolation-->
+<p>{{ property }}</p>
+
+
+<!--Property Binding-->
+<button
+  class="btn btn-primary"
+  [disabled]="disableButton"
+  [autofocus]="buttonAutoFocus"
+>Disabled Button</button>
+
+<!--Event Binding-->
+<button
+  class="btn btn-primary"
+  (click)="myFunctionClick($event)"
+>Event Binded</button>
+
+<!--Two Way Binding-->
+<input type="text" class="form-control" [(ngModel)]="ngModelProperty">
+{{ ngModelProperty }}
+
+<p *ngIf="ngIfBool">Shown only if ngIf is true</p>
+<p *ngFor="let element of nfIfArray">{{ element }}</p>
+
+<p [ngStyle]="{backgroundColor: 'red'}">Style here with ngStyle</p>
+
+
+<p [ngClass]="{myClassForNgClass: true}">This style comes from ngStyle</p>
+<p>This is a exposed property. Value comes from parent app-component. Value is: {{ exposedProperty }}</p>
+
+<button class="btn btn-primary" (click)="willTriggerToParent()">Button to trigger @Output event to parent</button>
+
+<p #refToHTMLElementP (mouseover)="mouseOverFunktion(refToHTMLElementP)">This text should be extraced over local reference</p>
+
+
+<p #localRefOfP (mouseover)="viewPointMethod()">View Port example</p>

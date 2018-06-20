@@ -1,0 +1,367 @@
+<link rel="stylesheet" href="jqueryui/jquery-ui.css">
+<script src="jqueryui/jquery.min.js"></script>
+
+<!-- selectizerjs -->
+<link rel="stylesheet" href="plugins/normalize.css">
+<link rel="stylesheet" href="plugins/stylesheet.css">
+<script src="plugins/selectize.js"></script>
+<script src="plugins/selectize.index.js"></script>
+<link rel="stylesheet" href="/stylesheets/style.css">
+<link rel="stylesheet" href="plugins//bootstrap.min.css">
+<link rel="stylesheet" href="plugins//bootstrap.min.js">
+<link rel="stylesheet" href="plugins//bootstrap-theme.min.css">
+
+
+</br>
+<img src="http://i.stack.imgur.com/SBv4T.gif" title="this slowpoke moves" />
+<div id="mywrapper">
+    <div id="mydivcenter">
+        <h1>Word Bank Data Visualizer</h1>
+        </br>
+        <div id="selectIndicatorDiv"></div>
+        <div id="selectCountriesDiv"></div>
+        <div id="selectDateFromDiv"></div>
+        <div id="selectDateToDiv"></div>
+        </br>
+        <button type="button" class="btn btn-info" onclick="getWbData()">Load data</button>
+        <button type="button" class="btn btn-info" onclick="checkDataAvailability()">Check data availability</button>
+        </br>
+        </br>
+        </br>
+    </div>
+    <div id="hchartsContainer1"></div>
+    <div id="spinner" class="spinner" style="display:none;">
+    </div>
+</div>
+
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="javascripts/highcharts.js"></script>
+<script src="javascripts/dataCatalog.js"></script>
+<script src="plugins/moment.js"></script>
+<script>
+    $(function () {
+        var countries = {};
+        var indicators = {};
+        $body = $("body");
+        $('#spinner').show();
+        console.log("hier1");
+
+            $.getJSON("files/countries.json", function (parsedCountries) {
+
+                countries = {
+                    id: [],
+                    names: []
+                };
+                parsedCountries[1].forEach(function (e) {
+                    countries.id.push(e.id)
+                    countries.names.push(e.name)
+
+                });
+
+
+                var select = $('<select id="selectCountriesSelect" multiple class="demo-default" style="width:100%" placeholder="Select countries ...">');
+                for (i = 0; i < countries.id.length; i++) {
+                    var option = $('<option></option>');
+                    option.attr('value', countries.id[i]);
+                    option.text(countries.names[i]);
+                    select.append(option);
+                };
+                $('#selectCountriesDiv').empty().append(select);
+                $('#selectCountriesSelect').selectize({
+                    maxItems: 5
+                });
+
+
+            });
+
+
+
+
+        $.getJSON("files/indicators.json", function (parsedIndicators) {
+            indicators = {
+                id: [],
+                names: []
+            };
+            parsedIndicators[1].forEach(function (e, ind) {
+                console.log("hier2");
+                indicators.id.push(e.id)
+                indicators.names.push(e.name)
+                if(ind == parsedIndicators[1].length) {
+                    $('#spinner').hide()
+                }
+
+            });
+
+
+            var select = $('<select id="selectIndicatorSelect" multiple class="demo-default" style="width:100%" placeholder="Select indicator ...">');
+            for (i = 0; i < indicators.id.length; i++) {
+                var option = $('<option></option>');
+                option.attr('value', indicators.id[i]);
+                option.text(indicators.names[i]);
+                select.append(option);
+            };
+            $('#selectIndicatorDiv').empty().append(select);
+            $('#selectIndicatorSelect').selectize({
+                maxItems: 1
+            });
+
+        });
+
+
+
+        var firstDate = new Date("1970");
+        var secondDate = new Date("2017");
+        var dates = [];
+        var newDate;
+        dates.push(firstDate.getFullYear());
+        while (firstDate < secondDate) {
+            firstDate.setFullYear(firstDate.getFullYear() + 1);
+            newDate = new Date(firstDate);
+            dates.push(newDate.getFullYear());
+        }
+
+        var selectFrom = $('<select id="selectDateSelectFrom" multiple class="demo-default" style="width:100%" placeholder="Select date from">');
+        var selectTo = $('<select id="selectDateSelectTo" multiple class="demo-default" style="width:100%" placeholder="Select date to">');
+        for (i = 0; i < dates.length; i++) {
+            var option = $('<option></option>');
+            option.attr('value', dates[i]);
+            option.text(dates[i]);
+            selectFrom.append(option);
+        };
+        for (i = 0; i < dates.length; i++) {
+            var option = $('<option></option>');
+            option.attr('value', dates[i]);
+            option.text(dates[i]);
+            selectTo.append(option);
+        };
+        $('#selectDateFromDiv').empty().append(selectFrom);
+        $('#selectDateToDiv').empty().append(selectTo);
+        $('#selectDateSelectFrom').selectize({
+            maxItems: 1
+        });
+        $('#selectDateSelectTo').selectize({
+            maxItems: 1
+        });
+        $(document).ready(function () {
+            console.log("document loaded ok");
+        });
+
+        $(window).on("load", function () {
+            console.log("window loaded");
+        });
+
+
+        function getWbData() {
+            var allOptionElements = document.getElementById("selectCountriesSelect").children;
+            var allCountryIds = [];
+            var allCountryNames = [];
+            for (i = 0; i < allOptionElements.length; i++) {
+                allCountryIds.push(allOptionElements[i].value);
+                allCountryNames.push(allOptionElements[i].text);
+            }
+            var dateFrom = document.getElementById("selectDateSelectFrom").children[0].text;
+            var dateTo = document.getElementById("selectDateSelectTo").children[0].text;
+
+            var firstDate = new Date(dateFrom);
+            var secondDate = new Date(dateTo);
+            var dates = [];
+            var newDate;
+            dates.push(firstDate.getFullYear());
+            while (firstDate < secondDate) {
+                firstDate.setFullYear(firstDate.getFullYear() + 1);
+                newDate = new Date(firstDate);
+                dates.push(newDate.getFullYear());
+            }
+
+
+            var xhttp2 = new XMLHttpRequest();
+
+            xhttp2.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    var parsedData = JSON.parse(this.responseText)[1];
+                    console.log(parsedData);
+
+                    var dataLong = {};
+                    for (i = 0; i < allCountryIds.length; i++) {
+                        dataLong[allCountryIds[i]] = [];
+                        parsedData.forEach(function (value, index) {
+                            if (value.countryiso3code == allCountryIds[i])
+                                dataLong[allCountryIds[i]].push(value)
+                        });
+                    }
+                    var firstDate = new Date(dateFrom);
+                    var secondDate = new Date(dateTo);
+                    var dates = [];
+                    var newDate;
+                    dates.push(firstDate.getFullYear());
+                    while (firstDate < secondDate) {
+                        firstDate.setFullYear(firstDate.getFullYear() + 1);
+                        newDate = new Date(firstDate);
+                        dates.push(newDate.getFullYear());
+                    }
+                    var data = {};
+                    for (i = 0; i < allCountryIds.length; i++) {
+                        data[allCountryIds[i]] = [];
+                        dates.forEach(function (date, ind) {
+                            var founder = false;
+                            dataLong[allCountryIds[i]].forEach(function (value, index) {
+                                if (value.date == date && value.value != null) {
+                                    data[allCountryIds[i]].push(value.value);
+                                    founder = true;
+                                }
+                            });
+                            if (!founder) {
+                                data[allCountryIds[i]].push(null);
+                            }
+                        });
+                    }
+                    console.log(data);
+                    myHChartFunction(data, allCountryNames, allCountryIds, dates, dateFrom, dateTo);
+                }
+            };
+            var stringIndicator = document.getElementById("selectIndicatorSelect").children[0].value;
+            console.log("here comes indiecators");
+            console.log(stringIndicator);
+            var stringCountries = allCountryIds.join(seperator = ";");
+            xhttp2.open("GET", "http://api.worldbank.org/v2/countries/" + stringCountries + "/indicators/" + stringIndicator + "?per_page=5000&date=" + dateFrom + ":" + dateTo + "&format=json", true);
+            xhttp2.send();
+        }
+
+        function checkDataAvailability() {
+            console.log(countries.id.length);
+            var countriesShort = countries.id.slice(0, 250);
+            var countriesShort2 = countries.id.slice(251, 304);
+            var indicatorsShort = indicators.id;
+            console.log(indicatorsShort.length);
+            var results = [];
+            var stringCountries = countriesShort.join(seperator = ";");
+            var stringCountries2 = countriesShort2.join(seperator = ";");
+            console.log(stringCountries);
+            console.log(indicatorsShort[0]);
+            //indicatorsShort[0] = "SP.POP.TOTL";
+
+            var resAmount = [];
+            var resAmount2 = [];
+            var results = [];
+            var results2 = [];
+            var resAmountComplete = [];
+            var succesfullRequests = [0, 0];
+            var successfullUrlsFunctionsCounter = 0;
+            ProcessUrls(stringCountries, resAmount, results, 0);
+            ProcessUrls(stringCountries2, resAmount2, results2, 1);
+
+            function successfullUrlsFunction() {
+                if (successfullUrlsFunctionsCounter == 2) {
+                    for (i = 0; i < indicatorsShort.length; i++) {
+                        resAmountComplete[i] = resAmount[i] + resAmount2[i]
+                    }
+                    console.log("here comes resAmount");
+                    console.log(resAmountComplete);
+                }
+            }
+
+            function sleep(milliseconds) {
+                var start = new Date().getTime();
+                for (var i = 0; i < 1e7; i++) {
+                    if ((new Date().getTime() - start) > milliseconds) {
+                        break;
+                    }
+                }
+            }
+
+            function ProcessUrls(stringCountries, resAmount, results, succRequestCounter) {
+                for (i = 0; i < indicatorsShort.length; i++) {
+                    ProcessUrl("http://api.worldbank.org/v2/countries/" + stringCountries + "/indicators/" + indicatorsShort[i] + "?per_page=5000&date=1970:2016&format=json", i, resAmount, results, succRequestCounter)
+                    sleep(2000);
+                }
+            }
+
+            function ProcessUrl(url, index, resAmount, results, succRequestCounter) {
+                var http = new XMLHttpRequest();
+
+
+                http.open("GET", url, true);
+
+                console.log(url);
+                http.onreadystatechange = function () {
+                    if (http.readyState == 4 && http.status == 200) {
+                        succesfullRequests[succRequestCounter] = succesfullRequests[succRequestCounter] + 1;
+                        console.log(JSON.parse(http.responseText)[1]);
+                        if (JSON.parse(http.responseText)[1] != null) {
+                            var res = JSON.parse(http.responseText)[1];
+                            console.log(res);
+                            results[index] = [];
+                            res.forEach(function (e) {
+                                results[index].push(e.value);
+                            });
+                        } else {
+                            results[index] = [null];
+                        }
+
+                        if (succesfullRequests[succRequestCounter] == indicatorsShort.length) {
+                            results.forEach(function (e, index2) {
+                                var count = 0;
+                                for (i = 0; i < e.length; i++) {
+                                    if (e[i] !== null) {
+                                        count = count + 1;
+                                    }
+                                }
+                                resAmount[index2] = count;
+
+                            });
+                            successfullUrlsFunctionsCounter = successfullUrlsFunctionsCounter + 1;
+                            successfullUrlsFunction();
+
+                        }
+                    }
+                };
+
+                http.send(null);
+
+            }
+
+            /*
+                    indicatorsShort.forEach(function(e,index){
+
+
+
+
+
+                        xhttp3.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                console.log("inside");
+                                results[index] = JSON.parse(this.responseText);
+                                //var parsedData = JSON.parse(this.responseText);
+                                console.log(results);
+                            };
+
+                        };
+                    xhttp3.open("GET", "http://api.worldbank.org/v2/countries/" + stringCountries + "/indicators/" + e + "?per_page=5000&date=1970:2016&format=json", true);
+                    xhttp3.send();
+                    });
+            */
+
+        }
+    })
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

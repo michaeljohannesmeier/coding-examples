@@ -1,0 +1,366 @@
+p {
+  color: white;
+}
+
+
+.jumbotron {
+  background-color: #1f6f09;
+  color: #ffc50e;
+}
+.jumbotron p {
+  color: #ffc50e;
+}
+.btn-orangeBlack {
+  background-color: #ffc50e;
+  color: black;
+}
+.becomeOpacCont {
+  animation-name: becomeOpac;
+  animation-duration: 2s;
+  opacity: 0;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+
+.btn-orangeBlack:hover{
+  background-color: #333333;
+  color: #ffc50e;
+}
+.nav-link {
+  color: #ffc50e;
+}
+.nav-link.active {
+  background-color: white;
+  color: black;
+}
+.tab-pane p {
+  text-indent: 50px;
+
+}
+
+.nav-tabs {
+  font-size: 0.8em;
+  padding-left: 10px;
+}
+
+.my-first-letter {
+  font-size: 1.6em;
+  text-decoration:none;
+  color: white;
+  position: relative;
+  animation-name: letterJump;
+  animation-duration: 1.5s;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+
+.myContainer {
+  position:absolute;
+  border:solid red;
+}
+
+.maxWidth {
+  margin-right: 100px;
+
+}
+
+.myBadge {
+  position:absolute;
+  font-size:.7em;
+  background:#ffc50e;
+  color:black;
+  border-radius:10px;
+  box-shadow:0 0 1px #333;
+  padding: 0 10px 0 10px;
+  font-weight: bold;
+}
+
+.textHeading  {
+  position: relative;
+  background-color: #ffc50e;
+  animation-name: textHeading;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
+}
+
+.text1  {
+  position: relative;
+  background-color: #ffc50e;
+  animation-name: text1;
+  animation-duration: 5s;
+  animation-fill-mode: forwards;
+}
+.text1 p {
+  color: black;
+}
+.text2  {
+  position: relative;
+  background-color: #ffc50e;
+  animation-name: text1;
+  animation-duration: 6s;
+  animation-fill-mode: forwards;
+}
+.text3  {
+  position: relative;
+  background-color: #ffc50e;
+  animation-name: text1;
+  animation-duration: 7s;
+  animation-fill-mode: forwards;
+}
+
+.mt-3 {
+  position: relative;
+  opacity: 0;
+  animation-name: mt-3;
+  animation-duration: 7s;
+  animation-fill-mode: forwards;
+  animation-delay: 1s;
+}
+
+@-webkit-keyframes textHeading {
+  0% {background-color: #ffc50e;left: 1000px;top: 0%;}
+  100% {background-color: black;left: 50px;top: 0%;color: #ffc50e;}
+}
+@keyframes textHeading {
+  0% {background-color: #ffc50e;left: 1000px;top: 0%;}
+  100% {background-color: black;left: 50px;top: 0%;color: #ffc50e;}
+}
+
+
+@-webkit-keyframes text1 {
+  0%   {left:1000%; top:0%;}
+  100%  {left:60px; top:0%;}
+}
+@keyframes text1 {
+  0%   {left:1000%; top:0%;}
+  100%  {left:60px; top:0%;}
+}
+
+
+
+@-webkit-keyframes mt-3 {
+  0%   {opacity: 0}
+  100%   {opacity: 1}
+}
+@keyframes mt-3 {
+  0%   {opacity: 0}
+  100%   {opacity: 1}
+}
+
+@-webkit-keyframes letterJump {
+  0%    {left: 0px; top:0%; color: white}
+  10%    {left: 0px; top:-2px; color: white}
+  20%    {left: 0px; top:-4px; color: white}
+  30%    {left: 0px; top:-6px; color: white}
+  40%    {left: 0px; top:-8px; color: white}
+  50%    {left: 0px; top:-10px; color: #ffc50e}
+  60%    {left: 0px; top:-8px; color: #ffc50e}
+  70%    {left: 0px; top:-6px; color: #ffc50e}
+  80%    {left: 0px; top:-4px; color: #ffc50e}
+  90%    {left: 0px; top:-2px; color: #ffc50e}
+  100%  {left: 0px; top:0px; color: #ffc50e}
+}
+@keyframes letterJump {
+  0%    {left: 0px; top:0%; color: white}
+  10%    {left: 0px; top:-2px; color: white}
+  20%    {left: 0px; top:-4px; color: white}
+  30%    {left: 0px; top:-6px; color: white}
+  40%    {left: 0px; top:-8px; color: white}
+  50%    {left: 0px; top:-10px; color: #ffc50e}
+  60%    {left: 0px; top:-8px; color: #ffc50e}
+  70%    {left: 0px; top:-6px; color: #ffc50e}
+  80%    {left: 0px; top:-4px; color: #ffc50e}
+  90%    {left: 0px; top:-2px; color: #ffc50e}
+  100%  {left: 0px; top:0px; color: #ffc50e}
+}
+
+.myJumboBlack {
+  background-color: black;
+  color: white;
+  diplay: none;
+  padding-left: 10vw;
+}
+
+.myJumboBlack p {
+  color: white;
+}
+div.gallery {
+  position: relative;
+  float: left;
+  width: 50vw;
+  padding-left: 5px;
+}
+
+div.gallery:hover .overlayImgGallery {
+  transform: scale(1);
+  cursor: pointer;
+}
+
+.overlayImgGallery {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000000;
+  opacity: 0.7;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: scale(0);
+  transition: .3s ease;
+}
+
+
+div.gallery img {
+  width: 50vw;
+  height: auto;
+  height: 40vw;
+}
+
+div.desc {
+  background-color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+.imgText {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 0.8em;
+}
+
+
+@-webkit-keyframes becomeOpac {
+  0%   {opacity: 0}
+  100%   {opacity: 1}
+}
+@keyframes becomeOpac {
+  0%   {opacity: 0}
+  100%   {opacity: 1}
+}
+
+
+/*----------------MODAL--------------*/
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 70%;
+  max-width: 100%;
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation */
+.modal-content, #caption {
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+/* The Close Button */
+.closeModal {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #ffffff;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.closeModal:hover,
+.closeModal:focus {
+  color: #ffc50e;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 576px) {
+  .text1, .text2, .text3 {
+    font-size: 1.2em;
+  }
+
+  .nav-tabs {
+    font-size: 1.0em;
+    padding-left: 0px;
+  }
+
+  div.gallery {
+    width: 19vw;
+  }
+
+  div.gallery img {
+    width: 19vw;
+    height: 20vw;
+  }
+  .imgText {
+    font-size: 1em;
+  }
+}
+@media only screen and (min-width: 1140px) {
+
+  @-webkit-keyframes textHeading {
+    0% {background-color: #ffc50e;left: 1000px;top: 0%;}
+    100% {background-color: black;left: 120px;top: 0%;color: #ffc50e;}
+  }
+  @keyframes textHeading {
+    0% {background-color: #ffc50e;left: 1000px;top: 0%;}
+    100% {background-color: black;left: 120px;top: 0%;color: #ffc50e;}
+  }
+
+
+  @-webkit-keyframes text1 {
+    0%   {left:1000%; top:0%;}
+    100%  {left:130px; top:0%;}
+  }
+  @keyframes text1 {
+    0%   {left:1000%; top:0%;}
+    100%  {left:130px; top:0%;}
+  }
+
+
+}

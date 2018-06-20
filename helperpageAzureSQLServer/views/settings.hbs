@@ -1,0 +1,42 @@
+{{> header }}
+
+  <h2>Einstellungen</h2>
+</br>
+</br>
+<h4>Benutzerdaten:</h4>
+
+<table class = "changeAdressTable">
+  <tr>
+    <td>Vorname:</td>
+    <td>{{results.firstName}}</td>
+  </tr>
+  <tr>
+    <td>Nachname:</td>
+    <td>{{results.lastName}}</td>
+  </tr>
+    <tr>
+    <td>Strasse:</td>
+    <td>{{results.street}}</td>
+  </tr>
+    <tr>
+    <td>Hausnummer:</td>
+    <td>{{results.numberHouse}}</td>
+  </tr>
+    <tr>
+    <td>PLZ:</td>
+    <td>{{results.zip}}</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>Ort:</td>
+    <td>{{results.city}}</td>
+  </tr>
+   </tr>
+    <tr>
+    <td>Email:</td>
+    <td>{{results.email}}</td>
+  </tr>
+</table>
+<form action="/profile/settings/changeprofile">  
+	<button href="/profile/settings/changeprofile" type="submit" class="btn btn-primary">Benutzerdaten ändern</button>
+</form>

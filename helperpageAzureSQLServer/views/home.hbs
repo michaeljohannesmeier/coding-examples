@@ -1,0 +1,30 @@
+{{> header }}
+
+<h1>{{ title }}</h1>
+
+        {{# if myPersonalMessageObjektHome.message }}
+            <div id="alertMessageHome" class="alert alert-{{ myPersonalMessageObjektHome.color }}">{{ myPersonalMessageObjektHome.message }}</div>
+        {{/if}}
+
+      {{#each myData}}
+         <div class="col-sm-6 col-md-6" style="height: 450px; width: 300px; border: solid; border-width: 0.1px; margin: 1px; border-color: #d3d3d3; overflow: hidden;">
+           <span class="thumbnail" style="height: 10px; float: left;">
+            <div style="height: 400px; overflow: hidden;">
+               <img src= " {{ this.images }} " alt="..." height="200" width="200">
+                 <h3> {{ this.names }} </h3>
+                 <p> {{ this.description }} </p>
+            </div>
+            <p><a href="/details/{{this.productId}}" class="btn btn-primary" role="button">Details</a></p>
+           </span>
+         </div>
+      {{/each}}
+
+      <footer class="footer">
+        <p>&copy; Company 2017</p>
+      </footer>
+
+
+    <script type="text/javascript" src="/jquery/home.js"></script>
+    <script src="../../../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+Arbeitsgruppe PAS Data Analytics
+5. Protokoll 20.01.2017
+
+Anwesend:
+Adrian
+Michael
+Daniel
+Alex Häußer
+
+Agenda:
+
+Bei den unabhängigen Variablen, automatisches Arima die Auswahlmöglichkeit für Saisonalität berücksichtigen --> Adrian
+
+
+Intervention Analysis:
+Zum Modellieren besonderer Vorkomnisse --> Events, Gesetze usw. Werden durch Kategoriale Variablen im Input modelliert
+
+
+Hierarchichal TimeSeries:
+Eigenes R-Skript erstellen, für erstmal schnelle Ergebnisse --> Alex und Daniel
+
+
+Helix:
+Diese Woche soll der Server aufgesetzt werden. Adrian erkundigt sich ob er Zugriff auf den Server bekommt um Änderungen und Aktualisierungen
+schnell umsetzen zu können.
+
+
+VAR-Modelle:
+Saisonalität wird für alle Variablen berücksichtig, falls Saisonalität ausgewählt wurde. Saisondummys für einzelne Variablen auswählbar.
+RestrictedVAR Modell löscht Variablen, die eigentlich berücksichtigt werden sollten. Dies könnte durch einen zusätzlichen Vector gehandelt werden,
+der eine 1 für jene Variablen hält, die nicht gelöscht werden können und eine 0 für jene die gelöscht werden dürfen. Eine Auswahl der einzelnen
+im BS-Modal ermöglichen. --> Daniel
+
+
+Organisation:
+PAS Aufbau --> unabhängige Variablen aus dem Block rausziehen. Univariater Forecast Section vorsehen. Und falls erforderlich kann auch der Forecast
+für ein MReg Modell herangezogen werden. Priorisierung nicht so hoch.
+
+
+Nächster Termin 15.02.2017 15:00 Uhr
+Title: PAS - Die Codies
+Start Time: 08/02/2016 15:00 PM
+Host: Daniel Haller
+Event Id: 1561092
+Meeting Number: 845358087
+Host Key: 340907

@@ -1,0 +1,36 @@
+.navbaritems a {
+  color: white;
+  padding: 0 40px 20px 0;
+  font-size: 1.3em;
+
+}
+
+.navbarwidth {
+  width: 90%;
+  margin: auto;
+}
+.navbar-custom {
+  background-color: black;
+}
+.navbar-nav a {
+   color: white;
+}
+
+.navbar-nav a:hover {
+  color: #ffc50e;
+  text-decoration: none;
+}
+
+.navbar-nav .active {
+  border-bottom: 3px solid #ffc50e;
+}
+.myToggler:focus {
+  border: solid #ffc50e;
+}
+.myToggler {
+  border: solid rgba(255,197,14, 0.5);
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,197,14, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+

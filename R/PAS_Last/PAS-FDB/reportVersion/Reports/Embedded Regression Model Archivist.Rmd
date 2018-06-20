@@ -1,0 +1,1268 @@
+---
+title: "Perform Updates and Forecasts based on a Prediction Model comupted in PAS"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: journal
+    orientation: rows
+    vertical_layout: scroll
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(dygraphs)
+library(xts)
+library(archivist)
+library(dplyr)
+library(forecast)
+library(lubridate)
+library(ggplot2)
+library(xlsx)
+
+source("Skripte/update_Regression_Model.R", local = TRUE)
+```
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+### Choose Model
+
+```{r}
+
+inputPanel(
+  textInput('Rdata', h4(strong('Enter name of saved prediction model'))),
+  actionButton('loadModel', 'Lade Modell' ), 
+  uiOutput("summaryModel"),
+  br(),br(),
+  uiOutput("overwriteModel")
+)
+
+objects <- reactiveValues(
+  
+  # Globale Variablen fuer die in der PAS erstellten Modell-Settings und Ergebnisse
+  lmName = NULL,
+  lmDatumStart = NULL,
+  lmDatumEnd = NULL,
+  lmDates = NULL,
+  lmDatengrundlage = NULL,
+  lmDatengrundlage_Default = NULL,
+  lmRegressionModell = NULL,
+  lmTrendInput = NULL,
+  lmManualInput = NULL,
+  lmArimaModels =  NULL,
+  lmArimaSave = NULL,
+  lmArimaGraphs = NULL,
+  lmRegressionCoefficients = NULL,
+  lmRegressionQuality = NULL,
+  lmTimeFreq = NULL,
+  lmKindOfSavedModel = NULL,
+  lmNamesPredictors = NULL,
+  lmTestDaten =NULL,
+  lmexpsmModels = NULL,
+  lmexpsmSave = NULL,
+  lmexpsmGraphs = NULL,
+  
+  #Flag-Variable, welche indiziert ob die Test-Daten schon geladen wurden
+  lmFlagUpdateTest = FALSE,
+  
+  usedForecastsInd = NULL,
+  
+  load_message = NULL,
+  
+  #Info objects
+  frequencyValue = NULL,
+  frequencyName = NULL,
+  weekendForecast = NULL,
+
+  #Uploaded Data
+  uploadedData = NULL,
+  
+  #Update Counter
+  lastUpdateData = NULL,
+  
+  #Flags fÃ¼r Procedures, welche durch ein Update des Regressionsmodells getriggert werden
+  updatedIndependent = FALSE,
+  updateTableIndVariables = NULL,
+  
+  #Flag fÃ¼r das Starten der Application
+  firstLoad = TRUE,
+  
+  #Namen der Koeffizienten
+  coeffNames = NULL
+)
+
+output$summaryModel <- renderUI({
+  
+  if(is.null(objects$lmDatumEnd)){return()}
+  
+  return(list(
+  br(),br(),
+  paste("- Start date: ", objects$lmDatumStart),br(),
+  paste("- End date: ", objects$lmDatumEnd),br(),
+  paste("- Frequency by: ", objects$frequencyName),br(),
+  if(objects$frequencyName == "day" & objects$weekendForecast == "0"){
+    paste("- No forecast for Weekend")
+    # Falls nicht daily + weekend.for ausgewählt wurde (entweder aut oder man) geht überspringt er den if-Schritt
+    # Es werden einfach die Anzahl an Tagen an den letzten Datenpunkt angehängt.
+    
+  },br(),
+  paste("- Number of variables: ", ncol(objects$lmRegressionModell[[2]])),br(),
+  paste("- Number of observations: ", nrow(objects$lmRegressionModell[[2]])),br(),
+  paste("- Dependent variable: ", objects$lmRegressionModell[[7]])))
+  
+})
+
+observeEvent(input$loadModel, {
+  
+  if(isolate(input$Rdata) == "") return()
+
+  setLocalRepo(paste(getwd(),"/arepo",sep=""))
+
+  loaded_data <- tryCatch({
+      asearch(patterns = as.character(input$Rdata))[[1]]
+  }, error = function(e){
+      -1
+  })
+    
+  if(identical(loaded_data, -1)){
+    objects$load_message <- paste("Loading via name:", input$Rdata, "not possible, check database settings", sep = " ")
+    return()
+  }
+    
+  objects$lmName <- input$Rdata
+  
+  objects$lmDatengrundlage <- loaded_data[[1]]
+  
+  objects$lmRegressionModell <- loaded_data[[2]]
+  objects$lmTrendInput <- loaded_data[[3]]
+  objects$lmManualInput <- loaded_data[[4]]
+  objects$lmArimaModels <- loaded_data[[5]]
+  objects$lmArimaSave <- loaded_data[[6]]
+  objects$lmArimaGraphs <- loaded_data[[7]]
+  
+  objects$lmRegressionCoefficients <- loaded_data[[8]]
+  objects$lmRegressionQuality <- loaded_data[[9]]
+  objects$lmTimeFreq <- loaded_data[[10]]
+  objects$lmKindOfSavedModel  <- loaded_data[[11]]
+  objects$lmDatengrundlage_Default <- loaded_data[[1]]
+  objects$lmTestDaten <- loaded_data[[17]]
+  objects$lmexpsmModels <- loaded_data[[18]]
+  objects$lmexpsmSave <- loaded_data[[19]]
+  objects$lmexpsmGraphs <- loaded_data[[20]]
+  
+  if(!identical(objects$lmTestDaten,0)){
+    objects$lmFlagUpdateTest <- TRUE
+  }
+  
+  objects$usedForecastsInd <- loaded_data[[13]]
+  
+  objects$frequencyValue <- loaded_data[[14]]
+  objects$frequencyName  <- loaded_data[[15]]
+  objects$lmNamesPredictors <- loaded_data[[16]]
+  objects$weekendForecast <- loaded_data[[21]]
+
+  
+  objects$lmDatumEnd <- tail(objects$lmDatengrundlage[[1]], n = 1)[[1]]
+  objects$lmDates <- objects$lmDatengrundlage[[1]]
+  
+})
+
+output$overwriteModel <- renderUI({
+  
+  if(is.null(objects$lmRegressionModell)) return()
+  
+  return(list(actionButton("overwriteRdata","Save current settings"), 
+              br(),
+              textInput('RdataNew', h4(strong("Enter new name")))))
+})
+
+observeEvent(input$overwriteRdata, {
+  
+  if(input$RdataNew == "") return()
+  
+  nameOverwriteModel <- input$RdataNew
+  
+  setLocalRepo("C:\\Users\\DE-82286\\Desktop\\PAS-Offline-Mit NN\\arepo")
+  
+  # Verpacken aller Elemente, welche gespeichert werden sollen in einer Liste
+  saved_items_all <- list(Datengrundlage_Model = objects$lmDatengrundlage,
+                          Modell = objects$lmRegressionModell,
+                          Trend_Data = objects$lmTrendInput,
+                          Manuelle_Data = objects$lmManualInput,
+                          ARIMA_Models = objects$lmArimaModels,
+                          ARIMA_Store  =  objects$lmArimaSave,
+                          ARIMA_Graphs = objects$lmArimaGraphs,
+                          Coefficients_Model = objects$lmRegressionCoefficients,
+                          Quality_Model = objects$lmRegressionQuality,
+                          frequency_ts = objects$lmTimeFreq,
+                          Art_gespeichertes_Modell = objects$lmKindOfSavedModel,
+                          Datengrundlage_Model_complete = objects$lmDatengrundlage_Default,
+                          Verwendete_Forecasts = objects$usedForecastsInd,
+                          Frequency_value = objects$frequencyValue,
+                          Frequency_name  = objects$frequencyName,
+                          Namen_Predictoren = objects$lmNamesPredictors,
+                          Test_Daten = 0,
+                          EXPSM_Models = objects$lmexpsmModels,
+                          EXPSM_Store = objects$lmexpsmSave,
+                          EXPSM_Graphs = objects$lmexpsmGraphs,
+                          weekend_forecast = objects$weekendForecast)
+  
+  print(length(saved_items_all))
+  
+  print(nameOverwriteModel)
+  # Speichern der zugrundeliegenden Daten in eine lokale Datenbank
+  withProgress(message = "Save currently stored model",value=0.1,{
+    hash <- saveToLocalRepo(saved_items_all,
+                            userTags = nameOverwriteModel)
+  })
+  
+  withProgress(message = "Successfully saved",value=1,{
+    
+  })
+  
+})
+```
+
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Visualization of Regression Model
+
+```{r}
+
+regErgAuto <- eventReactive(objects$lmRegressionModell, {
+  
+  if(is.null(objects$lmRegressionModell)) return()
+  
+  #if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 12){
+  #  objects$coeffNames <- attributes(objects$lmRegressionModell[[2]])$names[-((length(attributes(objects$lmRegressionModell[[2]])$names)-10):length(attributes(objects$lmRegressionModell[[2]])$names))]
+  #}else if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 4){
+  #  objects$coeffNames <- attributes(objects$lmRegressionModell[[2]])$names[-((length(attributes(objects$lmRegressionModell[[2]])$names)-2):length(attributes(objects$lmRegressionModell[[2]])$names))]
+  #}else{
+  #  objects$coeffNames <- objects$lmNamesPredictors
+  #}
+  
+  objects$coeffNames <- objects$lmNamesPredictors
+  
+  if(objects$firstLoad){
+    objects$updateTableIndVariables <- as.data.frame(cbind(objects$coeffNames, rep("Up to date", length(objects$coeffNames))))
+    colnames(objects$updateTableIndVariables) <- c("Variables", "Status")
+    objects$updateTableIndVariables$Status <- as.character(objects$updateTableIndVariables$Status)
+    objects$firstLoad <- FALSE
+  }
+  
+  lmModel <- objects$lmRegressionModell
+  datum   <- objects$lmDates
+    
+  fittedValues <- fitted(lmModel[[1]])
+  
+  diff <- length(datum) - length(fittedValues)
+    
+  tsErg <- xts(cbind(lmModel[[1]]$model[ ,1], fittedValues), order.by = tail(datum, n = length(datum) - diff))
+  colnames(tsErg) <- c("Historic", "Fitted")
+  
+  objects$lmDatumStart <- datum[diff + 1]
+  
+  return(dygraph(tsErg, main = objects$lmRegressionModell[[7]]) %>% dyRangeSelector() %>%
+         dyLegend(width = 800) %>% dyOptions(drawPoints = TRUE, pointSize = 2))
+    
+  })
+
+dygraphOutput("regVis")
+  # Output Visualization of regression results via a dygraph
+ output$regVis <- renderDygraph({
+    
+    if(is.null(regErgAuto())) return()
+    
+    regErgAuto()
+    
+  })
+          
+
+```
+
+### Coefficients, Quality and Time-Lags
+
+```{r}
+fluidRow(
+      column(
+          width = 4,
+          uiOutput("coefEval"),
+          dataTableOutput("coefficientsRegression")
+      ),
+      column(
+          width = 4,
+          uiOutput("qualEval"),
+          dataTableOutput("qualityRegression")
+      ),
+      column(
+        width = 4,
+        uiOutput("timeLagsEval"),
+        dataTableOutput("timelagsRegression")
+      )
+  )
+
+# Generate Headers
+output$coefEval <- renderUI({
+  
+  if(is.null(objects$lmRegressionCoefficients)) return()
+  
+  return(h3(strong("Coefficient Evaluation")))
+  
+})
+
+# Generate Headers
+output$qualEval <- renderUI({
+  
+  if(is.null(objects$lmRegressionCoefficients)) return()
+  
+  return(h3(strong("Quality of Regression")))
+  
+})
+
+# Generate Headers
+output$timeLagsEval <- renderUI({
+  
+  if(is.null(objects$lmRegressionCoefficients)) return()
+  
+  return(h3(strong("Drivers and Time-Lags")))
+  
+})
+
+# Output coefficent Overview of regression model
+output$CoefficientsRegression <- renderDataTable({
+ 
+  if(is.null(objects$lmRegressionCoefficients)) return()
+    
+  cbind(Variables = rownames(objects$lmRegressionCoefficients), round(objects$lmRegressionCoefficients, digits = 3))
+  
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 5, lengthChange = FALSE))
+  
+  
+# Output Quality evaluation of regression model
+output$qualityRegression <- renderDataTable({
+  
+  if(is.null(objects$lmRegressionQuality)){
+    return()
+  }
+    
+    cbind(Criteria = rownames(objects$lmRegressionQuality), round(objects$lmRegressionQuality, 3))
+     
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 5, lengthChange = FALSE))
+  
+# Generate Time-Lag table
+timeLagsReg <- reactive({
+  
+  lags <- objects$lmRegressionModell[[4]]
+  
+  if(identical(lags, NULL)) {return()}
+  
+  lags.store <- data.frame(lags)
+  
+  if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 12){
+    rownames(lags.store) <- attributes(objects$lmRegressionModell[[2]])$names[-((length(attributes(objects$lmRegressionModell[[2]])$names)
+                                                                  -10):length(attributes(objects$lmRegressionModell[[2]])$names))]
+  }else if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 4){
+    rownames(lags.store) <- attributes(objects$lmRegressionModell[[2]])$names[-((length(attributes(objects$lmRegressionModell[[2]])$names)
+                                                                   -2):length(attributes(objects$lmRegressionModell[[2]])$names))]
+  }else{
+    rownames(lags.store) <- attributes(objects$lmRegressionModell[[2]])$names
+  }
+  
+  colnames(lags.store) <- "Lags"
+  
+  cbind(Variables = rownames(lags.store), lags.store)
+  
+})
+
+# Output corresponding time lags of regression
+output$timelagsRegression <-renderDataTable({
+  
+  if(is.null(objects$lmRegressionModell)){return()}
+  
+  return(timeLagsReg())
+  
+  
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 5, lengthChange = FALSE))
+
+# Ueber diesen Eventhandler wird die reactiveVariable "tabelle.variablen" befuellt, auf Basis der 
+# benoetigten Variablen fuer das Regressionsmodell
+observe({
+
+  if(is.null(objects$lmRegressionModell)) return()
+  
+  regression.modell <- objects$lmRegressionModell
+  
+  ergebnis.tabelle <- data.frame()
+  
+  # Check for Saisonalitaet um Dummy-Variablen herauszufilter
+  if(regression.modell[[8]] && objects$frequencyValue == 12){
+    required.names <- names(regression.modell[[1]]$coefficients)[-1][names(regression.modell[[1]]$coefficients[-1])
+                                                                     %in% (attributes(regression.modell[[2]])$names[-((ncol(regression.modell[[2]])-10): ncol(regression.modell[[2]]))])]
+  }else if(regression.modell[[8]] && objects$frequencyValue == 4){
+    required.names <- names(regression.modell[[1]]$coefficients)[-1][names(regression.modell[[1]]$coefficients[-1])
+                                                                     %in% (attributes(regression.modell[[2]])$names[-((ncol(regression.modell[[2]])-2): ncol(regression.modell[[2]]))])]
+  }else{
+    required.names <- names(regression.modell[[1]]$coefficients)[-1][names(regression.modell[[1]]$coefficients[-1])
+                                                                     %in% (attributes(regression.modell[[2]])$names)]
+  }
+  
+  arima.names <- objects$lmArimaSave$Variable.Name
+  expsm.names <- objects$lmexpsmSave$Variable.Name
+  manual.data <- objects$lmManualInput
+  trend.data <- objects$lmTrendInput
+  
+  nicht.arima.forecast <- sapply(required.names, function(x) x %in% arima.names)
+  nicht.expsm.forecast <- sapply(required.names, function(x) x %in% expsm.names)
+
+  
+  # Sollten fuer verschiedene Variablen schon ARIMA-Modelle bestehen, werden diese aus den required.names herausgerechnet
+  if(length(which(nicht.arima.forecast == TRUE)) != 0){
+    ergebnis.tabelle <- data.frame("Independet variable" = required.names[which(nicht.arima.forecast == TRUE)],
+                                   "Forecast kind" = rep("ARIMA", length(required.names[which(nicht.arima.forecast == TRUE)])))
+    required.names <- required.names[- which(nicht.arima.forecast == TRUE)]
+    nicht.expsm.forecast <- sapply(required.names, function(x) x %in% expsm.names)
+  }
+  
+  if(length(which(nicht.expsm.forecast == TRUE)) != 0){
+    ergebnis.tabelle.temp <- data.frame("Independet variable" = required.names[which(nicht.expsm.forecast == TRUE)],
+                                   "Forecast kind" = rep("Exponential Smoothing", length(required.names[which(nicht.expsm.forecast == TRUE)])))
+    
+    if(dim(ergebnis.tabelle)[1] == 0){
+      ergebnis.tabelle <- ergebnis.tabelle.temp
+    } else {
+      ergebnis.tabelle <- rbind(ergebnis.tabelle, ergebnis.tabelle.temp)
+    }
+    required.names <- required.names[- which(nicht.expsm.forecast == TRUE)]
+  }
+  
+  names.manual <- character()
+  for(i in 1:length(manual.data)){
+    if(dim(manual.data[[i]])[1] != 0){
+      if(length(names.manual) == 0){
+        names.manual <- c(names(manual.data)[i])
+      }else {
+        names.manual <- c(names.manual, names(manual.data)[i])
+      }
+    }
+  }
+  
+  # In der Variable "nicht.arima.forecast" befindet sich nun die Matches von manuellen Eingaben
+  # mit den benoetigten Variablen.
+  if(length(names.manual) > 0){
+    nicht.arima.forecast <- sapply(required.names, function(x) x %in% names.manual)
+    if(length(which(nicht.arima.forecast == TRUE)) != 0){
+      ergebnis.tabelle.temp <- data.frame("Independet variable" = required.names[which(nicht.arima.forecast == TRUE)],
+                                          "Forecast kind" = rep("Manual Input", length(required.names[which(nicht.arima.forecast == TRUE)])))
+      if(dim(ergebnis.tabelle)[1] == 0){
+        ergebnis.tabelle <- ergebnis.tabelle.temp
+      } else {
+        ergebnis.tabelle <- rbind(ergebnis.tabelle, ergebnis.tabelle.temp)
+      }
+      required.names <- required.names[- which(nicht.arima.forecast == TRUE)]
+    }
+    
+  }
+  
+  # In der Variable "names.trend" befinden sich anschlie?end die Namen der Variablen mit
+  # mit trend-Input
+  names.trend <- character()
+  
+  for(i in 1:length(trend.data)){
+    if(is.null(dim(trend.data[[i]]))){
+      if(length(names.trend) == 0){
+        names.trend <- c(names(trend.data)[i])
+      } else {
+        names.trend <- c(names.trend, names(manual.data)[i])
+      }
+    }
+  }
+  
+  if(length(names.trend) > 0){
+    nicht.arima.forecast <- sapply(required.names, function(x) x %in% names.trend)
+    if(length(which(nicht.arima.forecast == TRUE)) != 0){
+      ergebnis.tabelle.temp <- data.frame("Independet variable" = required.names[which(nicht.arima.forecast == TRUE)],
+                                          "Forecast kind" = rep("Trend Input", length(required.names[which(nicht.arima.forecast == TRUE)])))
+      if(dim(ergebnis.tabelle)[1] == 0){
+        ergebnis.tabelle <- ergebnis.tabelle.temp
+      } else {
+        ergebnis.tabelle <- rbind(ergebnis.tabelle, ergebnis.tabelle.temp)
+      }
+      required.names <- required.names[- which(nicht.arima.forecast == TRUE)]
+    }
+  }
+  
+  # In required.names befinden sich anschliessend die uebrigen Variablen fuer die
+  # noch keine Vorhersage getroffen wurde.
+  
+  if(length(required.names) > 0){
+    ergebnis.tabelle.temp <- data.frame("Independet variable" = required.names,
+                                        "Forecast kind" = rep("Outstanding", length(required.names)))
+    if(dim(ergebnis.tabelle)[1] == 0){
+      ergebnis.tabelle <- ergebnis.tabelle.temp
+    } else {
+      ergebnis.tabelle <- rbind(ergebnis.tabelle, ergebnis.tabelle.temp)
+    }
+  }
+
+  isolate(objects$usedForecastsInd <- ergebnis.tabelle)
+  
+})
+```
+
+Row {.tabset .tabset-fade} 
+-----------------------------------------------------------------------
+### Upload new data and update Regression Model {data-width=900}
+```{r}
+fluidRow(
+        uiOutput("displayDate")
+)
+
+
+output$displayDate <- renderUI({
+  
+  if(is.null(objects$lmDatumEnd)){return()}
+  
+  return(list(column(
+              width = 2,
+              br(),
+              strong(paste("Last available date: ", objects$lmDatumEnd)),br(),
+              fileInput('fileUpload', h4(strong('Choose file to upload')),
+                                   accept = c(
+                                     'text/csv',
+                                     'text/comma-separated-values',
+                                     'text/tab-separated-values',
+                                     'text/plain',
+                                     '.csv',
+                                     '.tsv'
+                                   )
+                         ),
+              
+                         uiOutput("integrateTestData"),
+                         br(),br(),
+                         actionButton("updateData", "Update data")
+                      ),
+                       column(
+                         width = 2,
+                         
+                         radioButtons('quote', h4(strong('Choose quote')),
+                                      c(None='',
+                                        'Double quote'='"',
+                                        'Single quote'="'"),
+                                      '"'),
+                         radioButtons('sep', h4(strong('Choose separator')),
+                                      c(Comma=',',
+                                        Semicolon=';',
+                                        Tab='\t'),
+                                      ';'),
+                         radioButtons('decimalsep', h4(strong('Choose decimal seperator')),
+                                      c(Comma=',',
+                                        Dot='.'))
+                         
+                       ),
+                      column(
+                        width = 6,
+                        uiOutput("headerNewestData"),
+                        dataTableOutput("newestData")
+                      ),
+                      column(
+                        width = 2,
+                        uiOutput("headerUpdateModel")
+                      )
+              ))
+  
+})
+
+# Output des gegebenenfalls noetigen Upload-Buttons fuer die in der PAS verwendeten Test-Daten
+output$integrateTestData <- renderUI({
+  
+  if(is.null(objects$lmRegressionModell)){return()}
+  
+  if(!objects$lmFlagUpdateTest){return()}
+  
+  return(actionButton("intTestData", "Upload splitted data from PAS"))
+  
+})
+
+# Funktion wird ausgefuehrt, wenn die Test-Daten geladen werden sollen, um ein Update des Regressions-Modells durchzufuehren
+observeEvent(input$intTestData, {
+  
+  requiredVariables <- c(objects$lmRegressionModell[[7]], objects$lmNamesPredictors)
+  
+  objects$uploadedData <- objects$lmTestDaten[ ,requiredVariables]
+  
+  print(objects$lmTestData)
+  # Add new Data to database (lmDatengrundlage_Default) 
+  datesBeforeUpload <- objects$lmDatengrundlage_Default[[1]]
+
+  objects$lmDatengrundlage_Default <- rbind(objects$lmDatengrundlage_Default[ ,requiredVariables], objects$uploadedData)
+  
+  # Determine added dates
+  uploadedDates <- seq(objects$lmDatumEnd, by = objects$frequencyName, length.out = nrow(objects$uploadedData) + 1)[2:(nrow(objects$uploadedData) + 1)]
+  newCompleteDates <- c(datesBeforeUpload, uploadedDates)
+  
+  # Add new Dates zum Grunddatensatz
+  objects$lmDatengrundlage_Default <- cbind(newCompleteDates, objects$lmDatengrundlage_Default)
+  colnames(objects$lmDatengrundlage_Default)[1] <- "Dates"
+  
+  objects$uploadedData <- cbind(uploadedDates, objects$uploadedData)
+  
+  colnames(objects$uploadedData)[1] <- "Last.available.dates"
+  
+  objects$lmFlagUpdateTest <- FALSE
+  
+})
+
+
+# Funktion wird ausgefuehrt, wenn die gewaehlten Daten geladen werden
+observeEvent(input$updateData, {
+  
+  inFile <- input$fileUpload
+    
+  if(is.null(inFile)){return()}
+    
+  newData <-  tryCatch({
+      as.tbl(read.csv(inFile$datapath, header = TRUE, sep = input$sep,
+                      quote = input$quote, dec = input$decimalsep, stringsAsFactors = FALSE))
+    }, error = function(e) {
+      NULL
+    })
+  
+  if(is.null(newData)){
+    withProgress(message = "Data could not be loaded - Check raw data format!",value=0.1, {
+      setProgress(1) 
+      Sys.sleep(1.5)
+    })
+    return()
+  }
+
+  requiredVariables <- c(objects$lmRegressionModell[[7]], objects$lmNamesPredictors)
+  
+  indicatorVariables <- all(requiredVariables %in% colnames(newData))
+  
+  if(!indicatorVariables){
+    withProgress(message = "Some Predictors may be missing - Check also Column-Names!",value=0.1, {
+      setProgress(1) 
+      Sys.sleep(1.5)
+    })
+    return()
+  }
+
+  objects$uploadedData <- newData[ ,requiredVariables]
+  
+  # Add new Data to database (lmDatengrundlage_Default) 
+  datesBeforeUpload <- objects$lmDatengrundlage_Default[[1]]
+
+  objects$lmDatengrundlage_Default <- rbind(objects$lmDatengrundlage_Default[ ,requiredVariables], objects$uploadedData)
+  
+  # Determine added dates
+  uploadedDates <- seq(objects$lmDatumEnd, by = objects$frequencyName, length.out = nrow(objects$uploadedData) + 1)[2:(nrow(objects$uploadedData) + 1)]
+  newCompleteDates <- c(datesBeforeUpload, uploadedDates)
+  
+  # Add new Dates zum Grunddatensatz
+  objects$lmDatengrundlage_Default <- cbind(newCompleteDates, objects$lmDatengrundlage_Default)
+  colnames(objects$lmDatengrundlage_Default)[1] <- "Dates"
+  
+  objects$uploadedData <- cbind(uploadedDates, objects$uploadedData)
+  
+  colnames(objects$uploadedData)[1] <- "Last.available.dates"
+  
+})
+
+
+# Table of most recent uploaded data
+output$newestData <- renderDataTable({
+  
+  if(is.null(objects$uploadedData)){return()}
+  
+  return(objects$uploadedData)
+  
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 5, lengthChange = FALSE))
+
+
+# Header for most recent uploaded data
+output$headerNewestData <- renderUI({
+  
+  if(is.null(objects$uploadedData)){return()}
+  
+  return(h3(strong("Most recent uploaded Data")))
+  
+})
+
+# Header Update Regression Model
+output$headerUpdateModel <- renderUI({
+  
+   if(is.null(objects$uploadedData)){return()}
+                                                                         
+   return(list(h3(strong("Update Model")), 
+               br(),
+               strong(paste("Enlarge the currently loaded regression model by", nrow(objects$uploadedData), "new historical timesteps. The latest uploaded date is:", 
+                            tail(objects$uploadedData[ ,1], n = 1), sep = " ")),br(),br(),
+               actionButton("updateRegmodel", "Update Regression Model")
+               ))
+  
+})
+
+# Update procedure if update button is pressed
+observeEvent(input$updateRegmodel, {
+  
+  if(!is.null(objects$uploadedData) && identical(objects$lastUpdateData[ ,-1], objects$uploadedData[,-1])){
+    withProgress(message = "Data has already been integrated!", value=0.1, {
+      setProgress(1) 
+      Sys.sleep(1.5)
+    })
+    return()
+  }
+  
+  lagVector <- timeLagsReg()[timeLagsReg()[,1] %in% objects$lmNamesPredictors , ]
+  lagVector <- lagVector[[2]]
+  
+  cur.max <- max(lagVector)
+  cur.min <- min(lagVector)
+      
+  objects$lmDates <- c(objects$lmDates, objects$uploadedData[[1]])
+  
+  datenGrundlageLM <- calculate.data.lags(lagVector, cur.max, cur.min, objects$lmDatengrundlage_Default[,c(-1,-2)], objects$lmDatengrundlage_Default[[2]])
+
+  dates <- objects$lmDates[-(1:cur.max)]
+  
+  daten.grundlage <- datenGrundlageLM[[1]]
+    
+  # Aufbereitung der abhaengigen Variable in Abhaengigkeit der Lags fuer die Regression
+  dep.temp <- datenGrundlageLM[[2]]
+    
+  # Erstellung des temporaeren Regressionsmodells
+  daten.grundlage <- as.data.frame(daten.grundlage)
+  colnames(daten.grundlage) <- attributes(objects$lmDatengrundlage_Default[,c(-1,-2)])$names
+  
+  
+  # Sollte Seasonaliteat betracht werden, werden hier die enstprechenden Saisondummys gesetzt
+  if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 12){
+     daten.grundlage <- cbind(daten.grundlage, seasonaldummy(ts(rep(NA, nrow(daten.grundlage)),
+                                               start = c(year(dates[1]),
+                                                        month(dates[1]),
+                                                        day(dates[1])),
+                                                         frequency = objects$frequencyValue)))
+     
+     daten.grundlage.na.clean <- dplyr::select(daten.grundlage[complete.cases(daten.grundlage), ],
+                                               -c((ncol(daten.grundlage)- 10):ncol(daten.grundlage)))
+  }else if(objects$lmRegressionModell[[8]] && objects$frequencyValue == 4){
+      daten.grundlage <- cbind(daten.grundlage, seasonaldummy(ts(rep(NA, nrow(daten.grundlage)),
+                                                                 start = c(year(dates[1]),
+                                                                           quarter(dates[1])),
+                                                                 frequency = objects$frequencyValue)))
+      
+    daten.grundlage.na.clean <- dplyr::select(daten.grundlage[complete.cases(daten.grundlage), ], -c((ncol(daten.grundlage)- 2):ncol(daten.grundlage)))  
+  }else{
+    daten.grundlage.na.clean <- daten.grundlage[complete.cases(daten.grundlage), ]
+  }
+  
+  dep.temp <- dep.temp[complete.cases(daten.grundlage)]
+  
+  lm.lags <- lm(formula(objects$lmRegressionModell[[1]]), data = cbind(dep.temp, daten.grundlage[complete.cases(daten.grundlage), ]))
+  
+  objects$lmRegressionModell[[1]] <- lm.lags
+  objects$lmRegressionModell[[4]] <- timeLagsReg()[timeLagsReg()[,1] %in% objects$lmNamesPredictors , 2]
+  objects$lmRegressionModell[[2]] <- daten.grundlage
+  objects$lmRegressionModell[[6]] <- dep.temp
+  
+  bigData = FALSE
+  
+  # Update Quality Table
+  if(bigData == TRUE){
+    aic.reg <- extractAIC(objects$lmRegressionModell[[1]])[2]
+    r.squ <- objects$lmRegressionModell[[1]]$r.squared
+    adj.r.squ <- objects$lmRegressionModell[[1]]$adj.r.squared
+    erg.vec <- rbind(aic.reg,  r.squ, adj.r.squ)
+    rownames(erg.vec) <- c("Aikake's Information Criterion",  "R-squared", "Adjusted R-squared")
+    colnames(erg.vec) <- c("Value")
+  }else if(bigData == FALSE){
+    bic.reg <- BIC(objects$lmRegressionModell[[1]])
+    aic.reg <- extractAIC(objects$lmRegressionModell[[1]])[2]
+    r.squ <- summary(objects$lmRegressionModell[[1]])[8][[1]]
+    adj.r.squ <- summary(objects$lmRegressionModell[[1]])[9][[1]]
+    erg.vec <- rbind(aic.reg, bic.reg, r.squ, adj.r.squ)
+    rownames(erg.vec) <- c("Aikake's Information Criterion", "Bayesian Information Criterion", "R-squared", "Adjusted R-squared")
+    colnames(erg.vec) <- c("Value")
+  }
+  
+  objects$lmRegressionQuality <- erg.vec
+  
+  # Update Coefficent Table
+  if(bigData == TRUE){
+    coef.matrix <- as.data.frame(cbind(objects$lmRegressionModell[[1]]$coefficients,
+                                       objects$lmRegressionModell[[1]]$coef.std.error,
+                                       objects$lmRegressionModell[[1]]$coef.t.value,
+                                       objects$lmRegressionModell[[1]]$coef.p.value))
+    
+    names(coef.matrix) <- c("Coeff.", "Std.Err.", "T.Value", "P.Value")
+  }else if(bigData == FALSE){
+    coef.matrix <- summary(objects$lmRegressionModell[[1]])[4][[1]]
+  }
+  
+  objects$lmRegressionCoefficients <- coef.matrix
+ 
+  objects$lmDatumEnd <- tail(dates, n = 1)
+  
+  objects$lastUpdateData <- objects$uploadedData
+  
+  objects$updateTableIndVariables <- as.data.frame(cbind(objects$coeffNames, rep("Need update", length(objects$coeffNames))))
+  colnames(objects$updateTableIndVariables) <- c("Variables", "Status")
+  objects$updateTableIndVariables$Status <- as.character(objects$updateTableIndVariables$Status)
+  
+  # Sollte ein Forecast bestehen, werden diese verworfen, da nicht mehr aktuell
+  montecarlo.global$current_graph <- NULL
+  montecarlo.global$current_prediction <- NULL
+  
+})
+
+```
+
+Row {.tabset .tabset-fade} 
+----------------------------------------------------------------------
+### Update forecast procedures of Independent Variables
+```{r}
+fluidRow(
+  column(
+    width = 2,
+    uiOutput("chooseVariables"),
+    uiOutput("chooseForecastKind")
+  ),
+  column(
+    width = 3,
+    uiOutput("headerTable"),
+    dataTableOutput("uptodateTable")
+  ),
+  column(
+    width = 7,
+    uiOutput("chosenForecastKind")
+  )
+)
+
+output$chooseVariables <- renderUI({
+  
+  if(is.null(objects$usedForecastsInd)){
+    return()
+  }else{
+    return(list(selectInput("updateInd", h4(strong("Choose Independent Variable")),
+                            choices = as.character(objects$usedForecastsInd[ ,1])[which(objects$usedForecastsInd[ ,2] == "Outstanding")])))
+  } 
+  
+})
+
+output$chooseForecastKind <- renderUI({
+  
+  if(is.null(objects$usedForecastsInd)){
+    return()
+  }else{
+    return(list(selectInput("updateForecast", h4(strong("Choose Forecast Kind")),
+                            choices = c("ARIMA","Exponential Smoothing", "Trend", "Manual"))))
+  } 
+  
+})
+
+output$headerTable <- renderUI({
+  
+  if(is.null(objects$updateTableIndVariables)) return()
+  
+  return(h4("Status Table Forecast"))
+  
+})
+
+
+output$uptodateTable <- renderDataTable({
+  
+  if(is.null(objects$updateTableIndVariables)) return()
+  
+  return(objects$updateTableIndVariables)
+  
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 5, lengthChange = FALSE))
+  
+
+# Organisieren des Update Tabs fuer die verschiedenen Forecast-Methoden
+output$chosenForecastKind <- renderUI({
+  
+  if(is.null(input$updateInd)) return()
+
+  if(input$updateInd == ""){
+    return(p("All forecast procedures are up to date - Delete one to change the procedure"))  
+  }
+  
+  if(input$updateForecast == "ARIMA"){
+
+     return(list(fluidRow(
+       column(
+         width = 2,
+         radioButtons("arimaSelected", label = strong("Select type of ARIMA-Model"), choices = list("Automatic" = 1, "Manual" = 0), selected = 1),
+         conditionalPanel("input.arimaSelected == 0", 
+                          numericInput("AR", label = "Auto-Regression (p)", value = 0, min = 0),
+                          numericInput("DIFF", label = "Differencing (d)", value = 0, min = 0),
+                          numericInput("MA", label = "Moving-Average (q)", value = 0, min = 0)
+          )
+        ),
+        column(
+          width = 3,
+          numericInput("forecastarima", label = strong("Time steps to predict"), value = 5, min = 0),
+          actionButton("tsarima", label = "Calculate forecast"),
+          br(),br(),
+          conditionalPanel(condition = "input.tsarima", actionButton("storeArima", label = "Save forecast"))
+          #uiOutput("downloadUI")
+        ),
+        column(
+          width = 7,
+          dataTableOutput("predArima")
+        )
+    )))
+    
+    
+  }else if(input$updateForecast == "Exponential Smoothing"){
+
+     return(list(fluidRow(
+        column(
+          width = 2,
+          radioButtons("expsmSelected", label = "Select type of exponential smoothing Model", choices = list("Automatic" = 1, "Manual" = 0), selected = 1),
+          conditionalPanel("input.expsmSelected == 0",
+            fluidRow(
+              column(4,radioButtons("ERREXPSM", label = "Error", choices = c("Automatic" = "Z", "Additiv" = "A", "Multiplikativ" = "M"), selected = "Z")),
+              column(4,radioButtons("TRENDEXPSM", label = "Trend",choices = c("Automatic" = "Z", "None" = "N", "Additiv" = "A", "Multiplikativ" = "M"),selected = "Z"),
+                  conditionalPanel(condition = "input.TRENDEXPSM != 'N' && input.TRENDEXPSM != 'Z'",div(id="trenddampexpsm",radioButtons("TRENDDAMPEXPSM", label = "Damped Trend",choices = c("Yes" = TRUE, "No" = FALSE)))
+                  )),
+              column(4,radioButtons("SEASEXPSM", label = "Seasonality",choices = list("Automatic" = "Z", "None" = "N", "Additiv" = "A", "Multiplikativ" = "M"),selected = "Z")))
+        )),
+        column(
+          width = 3,
+          numericInput("forecastexpsm", label = "Select number of time steps to predict", value = 5, min = 0),
+          actionButton("tsexpsm", label = "Calculate forecast"),
+          br(),br(),
+          conditionalPanel(condition = "input.tsexpsm", actionButton("storeexpsm", label = "Save forecast"))
+          #uiOutput("downloadexpsmUI")
+        ),
+        column(
+          width = 7,
+          dataTableOutput("predexpsm")
+        )
+    )))
+    
+    
+  } else if(input$updateForecast == "Trend"){
+    
+    return(list(fluidRow(
+                  column(
+                    width = 2,
+                    selectInput("trend", strong("Determine trend"), choices = c("Increasing", "Stagnating", "Decreasing")),
+                    uiOutput("trendEntry")
+                  ),
+                  column(
+                    width = 3,
+                    numericInput("trendSteps", strong("Time steps to predict"), value = 1, min = 1, width = '250px'),
+                    actionButton("plotHistTrend", "Plot historical data"),
+                    br(),br(),
+                    actionButton("prevTrend", "Calculate forecast"),
+                    br(),br(),
+                    conditionalPanel("input.prevTrend", actionButton("subTrend", "Save forecast"))
+                  ),
+                  column(
+                    width = 7,
+                    dataTableOutput("forecasteValuesTrend")
+                  )
+    )))
+  }else if(input$updateForecast == "Manual"){
+    
+    return(list(fluidRow(
+                  column(
+                    width = 2,
+                    numericInput("expected", label = "Expected Value", value = 0),
+                    
+                    numericInput("lower", label = "Lower Quantile", value = 0),
+                    
+                    numericInput("upper", label = "Upper Quantile", value = 0)
+                  ),
+                  column(
+                    width = 3,
+                    p(strong("Date to forecast:")),
+                    uiOutput("displayDateManual"),
+                    br(),
+                    actionButton("plotHistManual", "Plot historical data"),
+                    br(),br(),
+                    conditionalPanel("input.plotHistManual", actionButton("acceptforecast", "Set next forecast"),
+                    br(),br(),
+                    actionButton("deleteforecast", "Delete last forecast"),
+                    br(),br()),
+                    conditionalPanel("input.acceptforecast", actionButton("saveforecast", "Save forecast"))
+                  ),
+                  column(
+                    width = 7,
+                    uiOutput("manual.header"),
+                    dataTableOutput("manual.data")
+                  )
+              )))
+  }
+})
+
+output$trendEntry <- renderUI({
+  
+  trend.assumption <- input$trend
+  
+  if(trend.assumption == "Increasing"){
+    
+    return(list(numericInput("expected.trend", label = "Rate of increase", value = 0, min = 0),
+                
+                numericInput("lower.trend", label = "Lower Percentage", value = 0),
+                
+                numericInput("upper.trend", label = "Upper Percentage", value = 0, min = 0)))
+    
+  } else if(trend.assumption == "Stagnating"){
+    
+    return(list(numericInput("lower.trend", label = "Lower Percentage", value = 0, max = 0),
+                
+                numericInput("upper.trend", label = "Upper Percentage", value = 0, min = 0)))
+    
+  } else if(trend.assumption == "Decreasing"){
+    
+    return(list(numericInput("expected.trend", label = "Rate of decrease", value = 0, max = 0),
+                
+                numericInput("lower.trend", label = "Lower Percentage", value = 0, max = 0),
+                
+                numericInput("upper.trend", label = "Upper Percentage", value = 0)))
+    
+  }
+})
+
+# Performance ARIMA-Modellierung
+arima.global <- reactiveValues(
+  index = 0,
+  index2 = 0,
+  boolArima = FALSE,
+  name.current.model = NULL,
+  arimaPredData = NULL,
+  current.graph = NULL
+)
+
+expsm.global <- reactiveValues(
+  index = 0,
+  index2 = 0,
+  boolexpsm = FALSE,
+  name.current.model = NULL,
+  expsmPredData = NULL,
+  current.graph = NULL
+)
+
+# Erstellen einer Zeitserie fuer die augewaehlte unabhaenngige Variable ("updateInd")
+timeseriesarima <- eventReactive(input$tsarima, {
+
+  timeseries.temp <- objects$lmDatengrundlage_Default[ ,input$updateInd]
+  
+  if(input$updateInd == "") return ()
+  
+  # Setzen der Zeitserie fuer aktuell ausgewaehlte unabhaengige Variable
+  time.ind.var <- xts(timeseries.temp, objects$lmDatengrundlage_Default[[1]])
+  
+  return(time.ind.var)
+  
+})
+
+# Erstelle ein automatisches Arima-Modells basierend auf den ausgewaehlten Daten
+arima.model.auto <- eventReactive(input$tsarima, {
+  
+  if(input$arimaSelected == 0) return()
+  
+  arima.global$name.current.model <- input$updateInd
+  
+  auto.arima.model <- auto.arima(timeseriesarima())
+  
+  return(auto.arima.model)
+  
+})
+
+# Erstellen eines Arima-Modells basierend auf den manuell eingetragenen Parametern
+arima.model.manual <- eventReactive(input$tsarima, {
+  
+  if(input$arimaSelected == 1) return()
+  
+  arima.global$name.current.model <- input$updateInd
+  
+  manual.arima.model <- Arima(timeseriesarima(), order = c(input$AR, input$DIFF, input$MA))
+  
+  return(manual.arima.model)
+})
+
+# Ausgabe der Kofidenzintervall-Schranken (5% und 95%) fuer spezifisches Arima-Modell
+output$predArima <- renderDataTable({
+  
+
+  if(arima.global$index == 1){return()}
+  
+  if(is.null(arima.global$current.graph)) return()
+
+   
+  if(!arima.global$boolArima) return()
+
+  arima.global$arimaPredData
+  
+}, options = list(scrollX = TRUE, searching = FALSE, pageLength = 4, lengthChange = FALSE))
+
+# Erstellen einer Zeitserie fuer die augewaehlte unabhaenngige Variable ("updateInd")
+timeseriesexpsm <- eventReactive(input$tsexpsm, {
+
+  timeseries.temp <- objects$lmDatengrundlage_Default[ ,input$updateInd]
+  
+  if(input$updateInd == "") return ()
+  
+  # Setzen der Zeitserie fuer aktuell ausgewaehlte unabhaengige Variable
+  time.ind.var <- xts(timeseries.temp, objects$lmDatengrundlage_Default[[1]])
+  
+  return(time.ind.var)
+  
+})
+
+# Erstelle ein automatisches expsm-Modells basierend auf den ausgewaehlten Daten
+expsm.model.auto <- eventReactive(input$tsexpsm,{
+
+  if(input$expsmSelected == 0) return()
+
+  expsm.global$name.current.model <- input$updateInd
+  # Die Funktion ets betrachtet Saisonalität nur ab dem Montagsrythmus. Dies muss daher mittels if-Schleifen berücksichtigt werden
+  # Wir werden daher zwei Fälle unterscheiden, zum einen ob die Daten in Tages- bzw. Nicht-Tragesrythmus eingespielt wurden.
+  timeseriesexpsm.temp <- timeseriesexpsm()
+  start<-index(timeseriesexpsm.temp)[1]
+  
+  if(objects$frequencyName=="month"){
+    timeseriesexpsm.temp <- ts(timeseriesexpsm.temp,start=c(year(start),month(start)),frequency=12)
+    auto.expsm.model <- ets(timeseriesexpsm.temp)
+  }else if(objects$frequencyName=="quarter"){
+    timeseriesexpsm.temp <- ts(timeseriesexpsm.temp,start=c(year(start),quarter(start)),frequency=4)
+    auto.expsm.model <- ets(timeseriesexpsm.temp)
+  }else{
+    auto.expsm.model <- ets(timeseriesexpsm.temp)
+  }
+
+  return(auto.expsm.model)
+  
+})
+
+# Erstellen eines expsm-Modells basierend auf den manuell eingetragenen Parametern
+expsm.model.manual <- eventReactive(input$tsexpsm, {
+
+  if(input$expsmSelected == 1) return()
+
+  expsm.global$name.current.model <- input$updateInd
+
+  # für das model Input der Funktion ets muss ein Charackter String übergeben werden. deshalb müssen wir zunächst
+  # die verschienenden Inputs zu einem String zusammenfassen
+  manual.expsm.model.parameter.temp <- paste(input$ERREXPSM,input$TRENDEXPSM, sep="")
+  manual.expsm.model.parameter <- paste(manual.expsm.model.parameter.temp,input$SEASEXPSM, sep="")
+
+  # Zwischenvariable zum Speichern des Dämpfungsparameters
+  if(input$TRENDEXPSM == 'N' || input$TRENDEXPSM == 'Z'){
+    damped.temp <- NULL
+  } else{
+    damped.temp <- as.logical(input$TRENDDAMPEXPSM)
+  }
+  
+  timeseriesexpsm.temp <- timeseriesexpsm()
+  start=index(timeseriesexpsm.temp)[1]
+  
+  if(objects$frequencyName=="month"){timeseriesexpsm.temp <- ts(timeseriesexpsm.temp,start=c(year(start),month(start)),frequency=12)}
+  else if(objects$frequencyName=="quarter"){timeseriesexpsm.temp <- ts(timeseriesexpsm.temp,start=c(year(start),quarter(start)),frequency=4)}
+  
+  manual.expsm.model <- ets(timeseriesexpsm.temp, model = manual.expsm.model.parameter, damped = damped.temp)
+
+  return(manual.expsm.model)
+})
+
+
+```
+
+### Visualisation
+```{r}
+
+uiOutput("visualisationForecast")
+
+output$visualisationForecast <- renderUI({
+  
+  if(is.null(objects$lmRegressionModell)) return()
+    
+  if(input$updateForecast == "ARIMA"){
+    dygraphOutput("timeseriesarima")
+  }else if(input$updateForecast == "Exponential Smoothing"){
+    dygraphOutput("timeseriesexpsm")
+  }else if(input$updateForecast == "Trend"){
+    dygraphOutput("plotDefaultTrend")
+  }else if(input$updateForecast == "Manual"){
+    dygraphOutput("graphManual")
+  }
+  
+})
+
+source("Skripte/arima_update_report.R", local = TRUE)
+
+source("skripte/expsm_update_report.R", local = TRUE)
+
+source("Skripte/trend_update_report.R", local = TRUE)
+
+source("Skripte/manual_update_report.R", local = TRUE)
+```
+
+----------------------------------------------------------------------
+### View and delete forecast procedures
+```{r}
+ fluidRow(
+      column(
+        width = 3,
+        uiOutput("chooseSavedModelInd"),
+        actionButton("showModelInd", "Show details"),
+        actionButton("deleteModel", "Delete selected model"),
+        br(),br(),
+        uiOutput("downloadForecastsInd"),
+        dataTableOutput("currentModelsInd") 
+       ),
+       column(
+        width = 9,
+        uiOutput("modelUIInd") 
+       )
+  )
+ 
+ source("Skripte/view_delete_independent_forecast.R", local = TRUE)
+```
+
+Row {.tabset .tabset-fade} 
+----------------------------------------------------------------------
+### Forecast settings 
+```{r}
+
+
+fluidRow(
+    column(
+       width = 2,
+       uiOutput("inputPredout1")
+    ),
+    column(
+        width = 3,
+        uiOutput("inputPredout2"),
+        br(),br(),
+        uiOutput("downloadMonteForecast")
+     ),
+     column(
+         width = 7,
+         uiOutput("headerPredDepMOnte"),
+         dataTableOutput("predForecastDepMonte")
+     )
+ )
+
+source("Skripte/dependent_forecast_settings.R", local = TRUE)
+
+```
+
+### Forecast result
+```{r}
+ dygraphOutput("simCI")
+
+ source("Skripte/dependent_simulation.R", local = TRUE)
+```
+
+
+
+
+

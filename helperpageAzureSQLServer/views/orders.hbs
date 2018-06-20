@@ -1,0 +1,44 @@
+{{> header }}
+
+  <h2>Bestellungen</h2>
+</br>
+</br>
+{{# if myPersonalMessageObjektOrder.message }}
+    <div style = "white-space: pre" id="myPersonalMessageObjektOrder.redirectFrom" class="alert alert-{{myPersonalMessageObjektOrder.color}}">{{ myPersonalMessageObjektOrder.message }}!
+Bestellungen sind nur alle 5 Minuten möglich.
+Ihre nächste Bestellung ist in {{diffTimeToWait.days}} Tage, {{ diffTimeToWait.hours }} Stunde(n), {{ diffTimeToWait.minutes }} Minute(n) und {{ diffTimeToWait.seconds }} Secunden möglich.
+</div>
+{{/if}}
+
+
+<h4>Ihre Bestellungen:</h4>
+
+      {{# if currentOrder }}
+        <table class = "showOrders">
+        {{#each currentOrder }}
+            <tr>
+              <td>{{ this.name }} </td>
+              <td>{{ this.description }}</td>
+              <td>{{ this.orderedDate }}</td>
+              <td>{{ this.status }}</td>
+            </tr>
+        {{/each }}
+        </table>
+      {{ else }}
+        <p>Sie haben noch keine Bestellungen bei uns vorgenommen</p>
+      {{/ if}}
+</br>
+</br>
+
+      {{# if orderPossible }}
+        {{# if everOrdered }}
+          <h4>Neue Bestellung möglich:</h4>
+          <p>Ihre letzte Bestellung liegt mehr als 5 Minuten zurück. Sie können eine neue Bestellung tätigen. </p>
+        {{/ if}}
+      {{ else }}
+        <h4>Keine neue Bestellung möglich:</h4>
+        <p>Ihre letzte Bestellung war am {{maxDate}}. Bestellungen sind nur alle 5 Minuten möglich.
+        <p>Ihre nächste Bestellung ist in {{diffTimeToWait.days}} Tage, {{ diffTimeToWait.hours }} Stunde(n), {{ diffTimeToWait.minutes }} Minute(n) und {{ diffTimeToWait.seconds }} Secunden möglich.
+      {{/ if}}
+
+    <script type="text/javascript" src="/jquery/orders.js"></script>

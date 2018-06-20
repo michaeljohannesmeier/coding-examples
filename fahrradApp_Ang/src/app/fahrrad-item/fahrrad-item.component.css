@@ -1,0 +1,12 @@
+
+.floater {
+  float: left;
+  margin: 1%;
+}
+.card {
+  width: 300px;
+}
+
+.card-img-top {
+  height: 300px;
+}

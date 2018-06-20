@@ -1,0 +1,36 @@
+{{> header }}
+
+  <h2>Bestellungen</h2>
+</br>
+</br>
+<h4>Ihre Bestellungen:</h4>
+
+      {{# if currentOrder }}
+        <table class = "showOrders">
+        {{#each currentOrder }}
+            <tr>
+              <td>{{ this.name }} </td>
+              <td>{{ this.description }}</td>
+              <td>{{ this.orderedDate }}</td>
+              <td>{{ this.status }}</td>
+            </tr>
+        {{/each }}
+        </table>
+      {{ else }}
+        <p>Sie haben noch keine Bestellungen bei uns vorgenommen</p>
+      {{/ if}}
+</br>
+</br>
+
+      {{# if orderPossible }}
+        {{# if everOrdered }}
+          <h4>Neue Bestellungen:</h4>
+          <p>Ihre letzte Bestellung liegt mehr als 30 Tage zurück. Sie können eine neue Bestellung tätigen. </p>
+        {{/ if}}
+      {{ else }}
+        <h4>Neue Bestellungen:</h4>
+        <p>Ihre letzte Bestellung war am {{maxDate}}. Bestellungen sind nur alle 30 Tage möglich.  
+        <p>Ihre nächste Bestellung ist in {{diffTimeToWait.days}} Tage, {{ diffTimeToWait.hours }} Stunde(n) und {{ diffTimeToWait.minutes }} Minute(n) möglich.
+      {{/ if}}
+
+

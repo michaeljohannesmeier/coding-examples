@@ -1,0 +1,189 @@
+.videoBox {
+  position: relative;
+  overflow: hidden;
+  height: 80vh;
+}
+
+.video {
+  position: absolute;
+  width: auto;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+
+.content {
+  margin: auto;
+  width: 90%;
+  bottom: 30%;
+  right: 0;
+  color: #ffc50e;
+  font-size: 2.5vw;
+  text-align: right;
+  position: absolute;
+  padding: 0 15vw 0 0;
+}
+
+.content h1{
+  color: #ffc50e;
+  font-size: 3.5vw;
+}
+
+
+@media only screen and (min-width: 576px) {
+  .content {
+    font-size: 2.0vw;
+    padding: 0 10vw 0 0;
+    width: 80%;
+  }
+  .content h1{
+    font-size: 3.0vw;
+  }
+
+}
+
+@media only screen and (min-width: 1140px) {
+  .content {
+    font-size: 1.5vw;
+    padding: 0 10vw 0 0;
+    width: 80%;
+  }
+  .content h1{
+    font-size: 2.5vw;
+  }
+}
+
+
+.blackwhite {
+  text-align: center;
+
+}
+.blackwhite p {
+  margin: auto;
+  width: 80%;
+  top: 50%;
+  color: white;
+  font-size: 1.3em;
+}
+.blackwhite p:first-letter {
+  font-size: 200%;
+  color: #ffc50e;
+}
+
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* entire container, keeps perspective */
+.flip-container {
+  background-color: white;
+  float: left;
+  perspective: 1000px;
+}
+/* flip the pane when hovered */
+.flip-container:hover .flipper, .flip-container.hover .flipper {
+  transform: rotateY(180deg);
+}
+
+
+/* flip speed goes here */
+.flipper {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back{
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+  position: relative;
+}
+
+/* back, initially hidden pane */
+.back {
+  transform: rotateY(180deg);
+
+}
+.backdiv {
+  background-color: black;
+  color: white;
+  display: block;
+  height: 400px;
+  text-align: center;
+  vertical-align: middle;
+}
+.backdiv p {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.container {
+  padding:0;
+  margin:0;
+}
+
+.text {
+  color: white;
+  font-size: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.backgroundWhite {
+  background-color: white;
+}
+
+.whiteblack {
+  text-align: center;
+  color: black;
+  background-color: white;
+  font-size: 0.8em;
+  padding: 0 10vw 0 10vw;
+}
+.whiteblack h1 {
+  margin: 70px;
+}
+
+@media only screen and (min-width: 576px) {
+  .whiteblack {
+    padding: 0 8vw 0 8vw;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  .whiteblack {
+    padding: 0 5vw 0 5vw;
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  .whiteblack {
+    padding: 0 4vw 0 4vw;
+  }
+}
